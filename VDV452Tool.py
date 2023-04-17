@@ -1,10 +1,13 @@
 import zipfile
 import os
 import tempfile
+import csv
+import io
 import shutil
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from datetime import datetime
+from zipfile import ZipFile, ZIP_DEFLATED
 
 encoding = "iso-8859-1"
 
@@ -265,6 +268,10 @@ def update_zip(zip_path, new_id,selector):
             zero_columns = check_zero_columns(zip_path, files_to_check)
             return zero_columns
 
+        if selector ==8:
+            switch = switch_ort_names(zip_path)
+            print(switch)
+
         save_updated_vdv452_zip(zip_path, tempdir)
 
 def on_add_new_vehicle_click():
@@ -339,6 +346,70 @@ def on_check_additional_click():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
+def on_check_switch_click():
+    zip_path = root.filename.get()
+    if not zip_path:
+        messagebox.showerror("Error", "No zip file selected.")
+        return
+
+
+    try:
+        result = update_zip(zip_path, 0, 8)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+
+def switch_ort_names(zip_path):
+    temp_dir = 'temp_folder'
+
+    # Extract zip file contents to a temporary folder
+    with ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(temp_dir)
+
+    encoding='iso-8859-1'
+
+    # Read the content of rec_ort.x10 to find the encoding
+    with open(os.path.join(temp_dir, 'rec_ort.x10'), 'r', encoding=encoding) as file:
+        for line in file:
+            if line.startswith("chs;"):
+                encoding = line.strip().split(";")[1]
+                break
+
+    # Read the content of rec_ort.x10 using the detected encoding
+    with open(os.path.join(temp_dir, 'rec_ort.x10'), 'r', encoding=encoding) as file:
+        content = file.readlines()
+
+    # Find and switch column headers
+    for index, line in enumerate(content):
+        if line.startswith("atr;"):
+            columns = [col.strip() for col in line.split(";")]
+            try:
+                ort_name_index = columns.index('ORT_NAME')
+                ort_ref_ort_name_index = columns.index('ORT_REF_ORT_NAME')
+                columns[ort_name_index], columns[ort_ref_ort_name_index] = columns[ort_ref_ort_name_index], columns[
+                    ort_name_index]
+                content[index] = ";".join(columns)
+                break
+            except ValueError:
+                raise ValueError("Column headers not found in rec_ort.x10")
+
+    # Save the updated rec_ort.x10 using the detected encoding
+    with open(os.path.join(temp_dir, 'rec_ort.x10'), 'w', encoding=encoding) as file:
+        file.writelines(content)
+
+    # Create a new zip file with the updated content
+    new_zip_path = os.path.splitext(zip_path)[0] + '_updated.zip'
+    with ZipFile(new_zip_path, 'w', compression=ZIP_DEFLATED) as new_zip:
+        for folder_name, subfolders, filenames in os.walk(temp_dir):
+            for filename in filenames:
+                file_path = os.path.join(folder_name, filename)
+                new_zip.write(file_path, os.path.relpath(file_path, temp_dir))
+
+    # Remove the temporary folder
+    shutil.rmtree(temp_dir)
+
+    return new_zip_path
+
 
 def on_check_columns():
     zip_path = root.filename.get()
@@ -406,6 +477,9 @@ button_add_new_vehicle = tk.Button(frame, text="Check columnns", command=on_chec
 button_add_new_vehicle.pack()
 
 button_add_new_vehicle = tk.Button(frame, text="Check for Zeros", command=on_check_zero, width=button_width, bg=bg2)
+button_add_new_vehicle.pack()
+
+button_add_new_vehicle = tk.Button(frame, text="Switch REF_ORT", command=on_check_switch_click, width=button_width, bg=bg2)
 button_add_new_vehicle.pack()
 
 button_exit = tk.Button(frame, text="Exit", command=root.quit, width=button_width, bg=bg2)

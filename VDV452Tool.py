@@ -143,7 +143,9 @@ def readlines_from_file(file_path):
 
 def write_file(file_path, content):
     with open(file_path, 'w', encoding=encoding) as file:
-        file.writelines(content)
+        file = file.writelines(content)
+    return file
+
 
 def add_new_line(content, new_id):
     new_line = f"rec;1000;{new_id};0;0;0;\"New Bus {new_id}\";0;\"NB{new_id}\""

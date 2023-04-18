@@ -26,6 +26,7 @@ if uploaded_file is not None:
         try:
             if selected_function == 'Switch Columns':
                 new_zip_path = switch_ort_names(temp_path)
+
             elif selected_function == 'Add New Vehicle':
                 temp_dir = 'temp_folder'
 
@@ -39,7 +40,8 @@ if uploaded_file is not None:
                 new_zip_path = write_file(menge_fzg_typ_path, updated_content)
 
             elif selected_function == 'Update Coordinates':
-                new_zip_path = update_coordinates(temp_path)
+
+                new_zip_path = update_zip(temp_path, 0, 2)
 
             st.success('Successfully processed the VDV zip file.')
 

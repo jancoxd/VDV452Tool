@@ -32,7 +32,7 @@ if uploaded_file is not None:
                 # Extract zip file contents to a temporary folder
                 with ZipFile(temp_path, 'r') as zip_ref:
                     zip_ref.extractall(temp_dir)
-                menge_fzg_typ_path = os.path.join(temp_path, 'menge_fzg_typ.x10')
+                menge_fzg_typ_path = os.path.join(temp_dir, 'menge_fzg_typ.x10')
                 content = readlines_from_file(menge_fzg_typ_path)
                 updated_content = add_new_line(content, new_id)
 

@@ -185,7 +185,8 @@ def update_zip(zip_path, new_id,selector):
             switch = switch_ort_names(zip_path)
             print(switch)
 
-        save_updated_vdv452_zip(zip_path, tempdir)
+        new_zip = save_updated_vdv452_zip(zip_path, tempdir)
+        return new_zip
 
 def readlines_from_file(file_path):
     with open(file_path, 'r', encoding=encoding) as file:

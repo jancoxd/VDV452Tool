@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from vdv452_functions import extract_vdv452_zip, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
+from vdv452_functions import extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
 st.title('VDV452 Modifier')
 
@@ -25,11 +25,18 @@ if uploaded_file is not None:
         try:
             if selected_function == 'Switch Columns':
                 new_zip_path = switch_ort_names(temp_path)
+                temp_path = new_zip_path
             elif selected_function == 'Add New Vehicle':
+                menge_fzg_typ_path = os.path.join(temp_path, 'menge_fzg_typ.x10')
+                content = readlines_from_file(menge_fzg_typ_path)
+                updated_content = add_new_line(content, new_id)
+                write_file(menge_fzg_typ_path, updated_content)
                 new_zip_path = update_zip(temp_path, new_id, 1)
+                temp_path = new_zip_path
 
             elif selected_function == 'Update Coordinates':
                 new_zip_path = update_coordinates(temp_path)
+                temp_path = new_zip_path
 
             st.success('Successfully processed the VDV zip file.')
 

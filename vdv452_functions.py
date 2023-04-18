@@ -213,6 +213,7 @@ def find_additional_files_with_rec(zip_path):
     return additional_files_with_rec
 
 
+
 def update_zip(zip_path, new_id,selector):
     with tempfile.TemporaryDirectory() as tempdir:
         extract_vdv452_zip(zip_path, tempdir)

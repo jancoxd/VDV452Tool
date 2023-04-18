@@ -272,61 +272,6 @@ def find_additional_files_with_rec(zip_path):
 
 
 
-def update_zip(zip_path, new_id,selector):
-    with tempfile.TemporaryDirectory() as tempdir:
-        extract_vdv452_zip(zip_path, tempdir)
-        if selector == 1:
-            menge_fzg_typ_path = os.path.join(tempdir, 'menge_fzg_typ.x10')
-            content = readlines_from_file(menge_fzg_typ_path)
-            updated_content = add_new_line(content, new_id)
-            write_file(menge_fzg_typ_path, updated_content)
-        if selector ==2:
-            rec_ort_path = os.path.join(tempdir, 'rec_ort.x10')
-            rec_ort_content = readlines_from_file(rec_ort_path)
-            updated_rec_ort_content = update_coordinates(rec_ort_content)
-            write_file(rec_ort_path, updated_rec_ort_content)
-        if selector ==3:
-            rec_ort_path = os.path.join(tempdir, 'rec_ort.x10')
-            empty_coordinates = check_empty_coordinates(rec_ort_path)
-            if empty_coordinates:
-                print("Empty coordinates found at the following line numbers:")
-                print(empty_coordinates)
-            else:
-                print("No empty coordinates found.")
-                empty_coordinates = 'No empty Coordinates'
-            return empty_coordinates
-        if selector ==4:
-            files_without_rec = find_files_without_rec(zip_path)
-            if files_without_rec:
-                print(files_without_rec)
-            else:
-                files_without_rec = "All files have lines starting with 'rec;'."
-            return files_without_rec
-        if selector ==5:
-            additional_files_with_rec = find_additional_files_with_rec(zip_path)
-            if additional_files_with_rec:
-                print(additional_files_with_rec)
-            else:
-                additional_files_with_rec = "No additional files"
-            return additional_files_with_rec
-        if selector ==6:
-            validation_result = validate_files(zip_path)
-
-            if validation_result:
-                print("The files are valid.")
-            else:
-                print("The files are not valid.")
-            return validation_result
-        if selector ==7:
-            files_to_check = ["rec_frt.x10", "lid_verlauf.x10", "rec_lid.x10"]
-            zero_columns = check_zero_columns(zip_path, files_to_check)
-            return zero_columns
-
-        if selector ==8:
-            switch = switch_ort_names(zip_path)
-            print(switch)
-
-        save_updated_vdv452_zip(zip_path, tempdir)
 
 def switch_ort_names(zip_path):
     temp_dir = 'temp_folder'

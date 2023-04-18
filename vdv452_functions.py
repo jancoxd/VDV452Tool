@@ -6,6 +6,10 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 encoding = "iso-8859-1"
 
+def extract_vdv452_zip(zip_path, tempdir):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(tempdir)
+
 def check_zero_columns(zip_path, files_to_check):
     zero_columns = {}
 

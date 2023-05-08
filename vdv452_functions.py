@@ -146,7 +146,7 @@ def update_coordinates(content):
     header_row = None
 
     for line in content:
-        if not header_row and line.startswith("chs;"):
+        if not header_row and line.startswith("atr;"):
             header_row = line.split(";")
             try:
                 ort_pos_breite_index = header_row.index("ORT_POS_BREITE")

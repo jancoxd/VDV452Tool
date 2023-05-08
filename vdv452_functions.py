@@ -165,7 +165,7 @@ def update_coordinates(content):
                 updated_line = ";".join(columns)
                 updated_content.append(updated_line)
             else:
-                st.success(f"Warning: Line has fewer columns than expected - {line}")
+                print(f"Warning: Line has fewer columns than expected - {line}")
                 updated_content.append(line)
         else:
             updated_content.append(line)

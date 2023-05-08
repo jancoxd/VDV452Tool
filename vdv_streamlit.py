@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from zipfile import ZipFile, ZIP_DEFLATED
-from vdv452_functions import create_deadhead_catalog, apply_update_coordinates, extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
+from vdv452_functions import create_deadhead_catalog,  extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
 st.title('VDV Tools v0.23b')
 

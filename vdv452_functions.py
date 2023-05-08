@@ -121,8 +121,9 @@ def validate_files(zip_path):
 
 
 def apply_update_coordinates(zip_path):
+    temp_dir = 'temp_folder'
     # Extract the zip file
-    extract_vdv452_zip(zip_path)
+    extract_vdv452_zip(zip_path,temp_dir)
 
     # Read the rec_ort.x10 file
     rec_ort_content = readlines_from_file("extracted_files/rec_ort.x10")

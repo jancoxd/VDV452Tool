@@ -124,7 +124,7 @@ def apply_update_coordinates(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         with tempfile.TemporaryDirectory() as temp_dir:
     # Extract the zip file
-            extract_vdv452_zip(zip_path,temp_dir)
+            extract_vdv452_zip(zip_ref,temp_dir)
 
     # Read the rec_ort.x10 file
             rec_ort_content = readlines_from_file("extracted_files/rec_ort.x10")
@@ -136,7 +136,7 @@ def apply_update_coordinates(zip_path):
             write_file("extracted_files/rec_ort.x10", updated_rec_ort_content)
 
     # Create a new zip file with the updated content
-            new_zip_path = save_updated_vdv452_zip(zip_path, temp_dir)
+            new_zip_path = save_updated_vdv452_zip(zip_ref, temp_dir)
 
     # Return the path to the new zip file
     return new_zip_path

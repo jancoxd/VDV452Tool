@@ -140,13 +140,13 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
         lid_verlauf_lines = file.readlines()
 
     # Extract column indices from rec_ort.x10
-    rec_ort_columns = rec_ort_lines[0].strip().split(";")
+    rec_ort_columns = rec_ort_lines[5].strip().split(";")
     ort_nr_index = rec_ort_columns.index("ORT_NR")
     lat_index = rec_ort_columns.index("ORT_POS_BREITE")
-    lon_index = rec_ort_columns.index("ORT_POS_HOEHE")
+    lon_index = rec_ort_columns.index("ORT_POS_LAENGE")
 
     # Extract column indices from lid_verlauf.x10
-    lid_verlauf_columns = lid_verlauf_lines[0].strip().split(";")
+    lid_verlauf_columns = lid_verlauf_lines[5].strip().split(";")
     lid_verlauf_ort_nr_index = lid_verlauf_columns.index("ORT_NR")
 
     # Extract ORT_NR from lid_verlauf.x10

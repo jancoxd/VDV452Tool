@@ -14,7 +14,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.getbuffer())
 
     # Let users select a function to perform
-    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates']
+    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates', 'Check for empty Files', 'Check for additional Files', 'Validate Files', 'Check for Columns with 0s']
     selected_function = st.selectbox('Select a function to perform:', function_options)
 
     if selected_function == 'Add New Vehicle':
@@ -35,6 +35,38 @@ if uploaded_file is not None:
                 new_zip_path = update_zip(temp_path, new_id, 1)
                 print(new_zip_path)
 
+            elif selected_function == 'Check for empty Files':
+                temp_dir = 'temp_folder'
+
+                check = update_zip(temp_path, 0, 4)
+                st.success(check)
+                new_zip_path = temp_path
+                download = 0
+
+            elif selected_function == 'Check for additional Files':
+                temp_dir = 'temp_folder'
+
+                check = update_zip(temp_path, 0, 5)
+                st.success(check)
+                new_zip_path = temp_path
+                download = 0
+
+            elif selected_function == 'Validate Files':
+                temp_dir = 'temp_folder'
+
+                check = update_zip(temp_path, 0, 6)
+                st.success(check)
+                new_zip_path = temp_path
+                download = 0
+
+            elif selected_function == 'Check for Columns with 0s':
+                temp_dir = 'temp_folder'
+
+                check = update_zip(temp_path, 0, 7)
+                st.success(check)
+                new_zip_path = temp_path
+                download = 0
+
             elif selected_function == 'Check for empy Coordinates':
                 temp_dir = 'temp_folder'
 
@@ -48,7 +80,6 @@ if uploaded_file is not None:
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
 
-            st.success('Successfully processed the VDV zip file.')
 
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:

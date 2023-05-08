@@ -14,7 +14,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.getbuffer())
 
     # Let users select a function to perform
-    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates']
+    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates']
     selected_function = st.selectbox('Select a function to perform:', function_options)
 
     if selected_function == 'Add New Vehicle':
@@ -33,6 +33,12 @@ if uploaded_file is not None:
 
                 new_zip_path = update_zip(temp_path, new_id, 1)
                 print(new_zip_path)
+
+            elif selected_function == 'Check for empy Coordinates':
+                temp_dir = 'temp_folder'
+
+                new_zip_path = update_zip(temp_path, new_id, 3)
+                st.success(new_zip_path)
 
             elif selected_function == 'Update Coordinates':
 

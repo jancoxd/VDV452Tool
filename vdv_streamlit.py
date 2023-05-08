@@ -37,8 +37,8 @@ if uploaded_file is not None:
             elif selected_function == 'Check for empy Coordinates':
                 temp_dir = 'temp_folder'
 
-                new_zip_path = update_zip(temp_path, 0, 3)
-                st.success(new_zip_path)
+                check = update_zip(temp_path, 0, 3)
+                st.success(check)
 
             elif selected_function == 'Update Coordinates':
 

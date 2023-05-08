@@ -39,7 +39,7 @@ if uploaded_file is not None:
 
                 check = update_zip(temp_path, 0, 3)
                 st.success(check)
-
+                new_zip_path = temp_path
             elif selected_function == 'Update Coordinates':
 
                 new_zip_path = update_zip(temp_path, 0, 2)

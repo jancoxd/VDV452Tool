@@ -38,7 +38,7 @@ if uploaded_file is not None:
                 content = readlines_from_file(menge_fzg_typ_path)
                 updated_content = add_new_line(content, new_id)
 
-                new_zip_path = update_zip(zip_ref, new_id, 1)
+                new_zip_path = update_zip(temp_path, new_id, 1)
                 print(new_zip_path)
 
             elif selected_function == 'Update Coordinates':

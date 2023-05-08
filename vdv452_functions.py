@@ -146,10 +146,15 @@ def update_coordinates(content):
     for line in content:
         if line.startswith("rec;"):
             columns = line.split(";")
-            columns[11] = columns[11] + "0"
-            columns[12] = columns[12] + "0"
-            updated_line = ";".join(columns)
-            updated_content.append(updated_line)
+            if len(columns) >= 13:  # Make sure there are at least 13 columns
+                columns[11] = columns[11] + "0"
+                columns[12] = columns[12] + "0"
+                updated_line = ";".join(columns)
+                updated_content.append(updated_line)
+            else:
+                # Add a warning message or handle the case when there are not enough columns
+                print(f"Warning: Line has fewer columns than expected - {line}")
+                updated_content.append(line)
         else:
             updated_content.append(line)
     return updated_content
@@ -162,7 +167,7 @@ def update_zip(zip_path, new_id,selector):
             content = readlines_from_file(menge_fzg_typ_path)
             updated_content = add_new_line(content, new_id)
             write_file(menge_fzg_typ_path, updated_content)
-        if selector ==2:
+        if selector == 2:
             rec_ort_path = os.path.join(tempdir, 'rec_ort.x10')
             rec_ort_content = readlines_from_file(rec_ort_path)
             updated_rec_ort_content = update_coordinates(rec_ort_content)

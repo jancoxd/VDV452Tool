@@ -36,7 +36,7 @@ if uploaded_file is not None:
 
             elif selected_function == 'Update Coordinates':
 
-                new_zip_path = apply_update_coordinates(temp_path)
+                new_zip_path = update_zip(temp_path, 0, 2)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
 
             st.success('Successfully processed the VDV zip file.')

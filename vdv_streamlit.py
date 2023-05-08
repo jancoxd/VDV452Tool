@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from zipfile import ZipFile, ZIP_DEFLATED
-from vdv452_functions import apply_update_coordinates, extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
+from vdv452_functions import create_deadhead_catalog, apply_update_coordinates, extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
 st.title('VDV Tools v0.23b')
 
@@ -14,7 +14,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.getbuffer())
 
     # Let users select a function to perform
-    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates', 'Check for empty Files', 'Check for additional Files', 'Validate Files', 'Check for Columns with 0s']
+    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates', 'Check for empty Files', 'Check for additional Files', 'Validate Files', 'Check for Columns with 0s', 'Create Deadhead Catalog']
     selected_function = st.selectbox('Select a function to perform:', function_options)
 
     if selected_function == 'Add New Vehicle':
@@ -79,7 +79,11 @@ if uploaded_file is not None:
                 new_zip_path = update_zip(temp_path, 0, 2)
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
+            elif selected_function == 'Create Deadhead Catalog':
 
+                new_zip_path = create_deadhead_catalog(temp_path)
+                print(new_zip_path)
+                st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
 
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:

@@ -3,6 +3,12 @@ import os
 import tempfile
 import shutil
 from zipfile import ZipFile, ZIP_DEFLATED
+import pandas as pd
+from routingpy import MapboxValhalla
+import itertools
+from tqdm import tqdm
+import geopy.distance
+import numpy as np
 
 encoding = "iso-8859-1"
 
@@ -121,9 +127,9 @@ def validate_files(zip_path):
 
 
 def apply_update_coordinates(zip_path):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            zip_ref.extractall(temp_dir)
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                zip_ref.extractall(temp_dir)
     # Extract the zip file
 
     # Read the rec_ort.x10 file
@@ -140,6 +146,109 @@ def apply_update_coordinates(zip_path):
 
     # Return the path to the new zip file
     return new_zip_path
+
+def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
+    stop_coordinates = []
+
+    # Read the data from rec_ort.x10
+    with open(rec_ort_path, 'r', encoding='iso-8859-1') as file:
+        rec_ort_lines = file.readlines()
+
+    # Read the data from lid_verlauf.x10
+    with open(lid_verlauf_path, 'r', encoding='iso-8859-1') as file:
+        lid_verlauf_lines = file.readlines()
+
+    # Extract column indices from rec_ort.x10
+    rec_ort_columns = rec_ort_lines[0].strip().split(";")
+    ort_nr_index = rec_ort_columns.index("ORT_NR")
+    lat_index = rec_ort_columns.index("ORT_POS_BREITE")
+    lon_index = rec_ort_columns.index("ORT_POS_HOEHE")
+
+    # Extract column indices from lid_verlauf.x10
+    lid_verlauf_columns = lid_verlauf_lines[0].strip().split(";")
+    lid_verlauf_ort_nr_index = lid_verlauf_columns.index("ORT_NR")
+
+    # Extract ORT_NR from lid_verlauf.x10
+    lid_verlauf_ort_nr = []
+    for line in lid_verlauf_lines[1:]:
+        if line.startswith("rec;"):
+            columns = line.strip().split(";")
+            lid_verlauf_ort_nr.append(columns[lid_verlauf_ort_nr_index])
+
+    # Check if ORT_NR is present in lid_verlauf.x10 and append coordinates to the list
+    for line in rec_ort_lines[1:]:
+        if line.startswith("rec;"):
+            columns = line.strip().split(";")
+            ort_nr = columns[ort_nr_index]
+            if ort_nr in lid_verlauf_ort_nr:
+                lat = columns[lat_index]
+                lon = columns[lon_index]
+                stop_coordinates.append((lat, lon))
+
+    return stop_coordinates
+
+
+def get_stop_coordinates_from_zip(zip_path):
+    # Create a temporary directory
+    with tempfile.TemporaryDirectory() as tempdir:
+        # Extract the VDV zip file to the temporary directory
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(tempdir)
+
+        # Construct the file paths for rec_ort.x10 and lid_verlauf.x10
+        rec_ort_path = os.path.join(tempdir, "rec_ort.x10")
+        lid_verlauf_path = os.path.join(tempdir, "lid_verlauf.x10")
+
+        # Call the get_stop_coordinates function with the extracted file paths
+        stop_coordinates = get_stop_coordinates(rec_ort_path, lid_verlauf_path)
+
+    return stop_coordinates
+
+
+def create_deadhead_catalog(zip_path):
+    api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
+
+    stops = get_stop_coordinates_from_zip(zip_path)
+    lat_lon = stops[['ORT_POS_BREITE', 'ORT_POS_LAENGE']].drop_duplicates()
+    client = MapboxValhalla(api_key=api_key)
+    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
+    combinations = pd.DataFrame(
+        [p for p in itertools.product(coords, repeat=2)])
+    use_threshold = 'No'
+    if use_threshold == 'YES':
+        vec_crow_distance = np.vectorize(crow_distance)
+        combinations['crow_distance'] = vec_crow_distance(combinations[0].values, combinations[1].values)
+        max_threshold = float(input('Please enter the maximum distance threshold between 2 points you want to use (km):'))
+        min_threshold = float(input('Please enter the minimum distance threshold between 2 points you want to use (km):'))
+        combinations = combinations[(combinations.crow_distance < max_threshold) & (combinations.crow_distance > min_threshold) & (combinations[0] != combinations[1])]
+    else:
+        combinations = combinations[(combinations[0] != combinations[1])]
+    combinations[['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = combinations.progress_apply(
+        lambda x: get_routing(x), axis=1, result_type='expand')
+    columns = ['Start Time Range', 'End Time Range', '	Generate Time',	'Route Id'	, 'Origin Stop Name'	, 'Destination Stop Name',
+               'Days Of Week',	'Direction'	, 'Purpose'	, 'Alignment',	'Pre-Layover Time',	'Post-Layover Time',	'updatedAt']
+    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+    if use_threshold == 'YES':
+        excel = combinations.drop([0, 1, 'crow_distance'], axis=1).to_excel(
+        'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    else:
+        excel = combinations.drop([0, 1], axis=1).to_excel(
+        'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    return excel
+def get_routing(row):
+    origin, destination = row[0], row[1]
+    origin_lat, origin_lon = origin[1], origin[0]
+    destination_lat, destination_lon = destination[1], destination[0]
+    route = client.directions(locations=[origin, destination], profile='bus')
+    origin_id = stops[(stops.stop_lat == origin_lat) & (
+        stops.stop_lon == origin_lon)].stop_id.values[0]
+    destination_id = stops[(stops.stop_lat == destination_lat) & (
+        stops.stop_lon == destination_lon)].stop_id.values[0]
+    return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
+def crow_distance(origin, destination):
+    origin_lat, origin_lon = origin[1], origin[0]
+    destination_lat, destination_lon = destination[1], destination[0]
+    return geopy.distance.geodesic((origin_lat, origin_lon), (destination_lat, destination_lon)).km
 
 def update_coordinates(content):
     updated_content = []
@@ -179,6 +288,7 @@ def update_zip(zip_path, new_id,selector):
             content = readlines_from_file(menge_fzg_typ_path)
             updated_content = add_new_line(content, new_id)
             write_file(menge_fzg_typ_path, updated_content)
+
         if selector == 2:
             rec_ort_path = os.path.join(tempdir, 'rec_ort.x10')
             rec_ort_content = readlines_from_file(rec_ort_path)

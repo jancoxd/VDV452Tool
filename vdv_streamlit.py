@@ -3,7 +3,7 @@ import os
 from zipfile import ZipFile, ZIP_DEFLATED
 from vdv452_functions import extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
-st.title('VDV452 Modifier v0.23')
+st.title('VDV452 Modifier v0.23a')
 
 uploaded_file = st.file_uploader('Upload a VDV zip file:', type=['zip'])
 

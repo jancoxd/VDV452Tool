@@ -129,44 +129,62 @@ def validate_files(zip_path):
 
 
 def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
-    stop_coordinates = []
+    with open(rec_ort_path, 'r', encoding='iso-8859-1') as f:
+        rec_ort_lines = f.readlines()
 
-    # Read the data from rec_ort.x10
-    with open(rec_ort_path, 'r', encoding='iso-8859-1') as file:
-        rec_ort_lines = file.readlines()
+    with open(lid_verlauf_path, 'r', encoding='iso-8859-1') as f:
+        lid_verlauf_lines = f.readlines()
 
-    # Read the data from lid_verlauf.x10
-    with open(lid_verlauf_path, 'r', encoding='iso-8859-1') as file:
-        lid_verlauf_lines = file.readlines()
+    header_rec_ort = None
+    header_lid_verlauf = None
 
-    # Extract column indices from rec_ort.x10
-    rec_ort_columns = rec_ort_lines[5].strip().split(";")
-    ort_nr_index = rec_ort_columns.index("ORT_NR")
-    lat_index = rec_ort_columns.index("ORT_POS_BREITE")
-    lon_index = rec_ort_columns.index("ORT_POS_LAENGE")
+    for line in rec_ort_lines:
+        if line.startswith("atr;"):
+            header_rec_ort = line.strip().split(";")
+            break
 
-    # Extract column indices from lid_verlauf.x10
-    lid_verlauf_columns = lid_verlauf_lines[5].strip().split(";")
-    lid_verlauf_ort_nr_index = lid_verlauf_columns.index("ORT_NR")
+    for line in lid_verlauf_lines:
+        if line.startswith("atr;"):
+            header_lid_verlauf = line.strip().split(";")
+            break
 
-    # Extract ORT_NR from lid_verlauf.x10
-    lid_verlauf_ort_nr = []
-    for line in lid_verlauf_lines[1:]:
-        if line.startswith("rec;"):
-            columns = line.strip().split(";")
-            lid_verlauf_ort_nr.append(columns[lid_verlauf_ort_nr_index])
+    if not header_rec_ort or not header_lid_verlauf:
+        print("Error: 'atr;' header line not found in rec_ort.x10 or lid_verlauf.x10")
+        return []
 
-    # Check if ORT_NR is present in lid_verlauf.x10 and append coordinates to the list
-    for line in rec_ort_lines[1:]:
+    try:
+        ort_nr_index = header_rec_ort.index("ORT_NR")
+    except ValueError:
+        print("Error: 'ORT_NR' not found in rec_ort.x10")
+        return []
+
+    try:
+        ort_ref_ort_nr_index = header_lid_verlauf.index("ORT_NR")
+    except ValueError:
+        print("Error: 'ORT_NR' not found in lid_verlauf.x10")
+        return []
+
+    rec_ort_coordinates = {}
+    for line in rec_ort_lines:
         if line.startswith("rec;"):
             columns = line.strip().split(";")
             ort_nr = columns[ort_nr_index]
-            if ort_nr in lid_verlauf_ort_nr:
-                lat = columns[lat_index]
-                lon = columns[lon_index]
-                stop_coordinates.append((lat, lon))
+            lat, lon = columns[-2], columns[-1]
+            rec_ort_coordinates[ort_nr] = (lat, lon)
 
-    return stop_coordinates
+    lid_verlauf_ort_nrs = set()
+    for line in lid_verlauf_lines:
+        if line.startswith("rec;"):
+            columns = line.strip().split(";")
+            ort_nr = columns[ort_ref_ort_nr_index]
+            lid_verlauf_ort_nrs.add(ort_nr)
+
+    coordinates = []
+    for ort_nr in lid_verlauf_ort_nrs:
+        if ort_nr in rec_ort_coordinates:
+            coordinates.append(rec_ort_coordinates[ort_nr])
+
+    return coordinates
 
 
 def get_stop_coordinates_from_zip(zip_path):

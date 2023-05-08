@@ -4,7 +4,7 @@ import tempfile
 import shutil
 from zipfile import ZipFile, ZIP_DEFLATED
 import pandas as pd
-from routingpy import MapboxValhalla
+from routingpy.routers import MapboxValhalla
 import itertools
 from tqdm import tqdm
 import geopy.distance

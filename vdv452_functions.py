@@ -135,7 +135,7 @@ def apply_update_coordinates(zip_path):
     write_file("extracted_files/rec_ort.x10", updated_rec_ort_content)
 
     # Create a new zip file with the updated content
-    new_zip_path = save_updated_vdv452_zip(zip_path)
+    new_zip_path = save_updated_vdv452_zip(zip_path, temp_dir)
 
     # Return the path to the new zip file
     return new_zip_path

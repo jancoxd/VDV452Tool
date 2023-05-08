@@ -143,16 +143,27 @@ def apply_update_coordinates(zip_path):
 
 def update_coordinates(content):
     updated_content = []
+    header_row = None
+
     for line in content:
-        if line.startswith("rec;"):
+        if not header_row and line.startswith("chs;"):
+            header_row = line.split(";")
+            try:
+                ort_pos_breite_index = header_row.index("ORT_POS_BREITE")
+                ort_pos_hoehe_index = header_row.index("ORT_POS_HOEHE")
+            except ValueError:
+                print("Error: ORT_POS_BREITE or ORT_POS_HOEHE not found in the header row.")
+                return content
+            updated_content.append(line)
+
+        elif line.startswith("rec;"):
             columns = line.split(";")
-            if len(columns) >= 13:  # Make sure there are at least 13 columns
-                columns[11] = columns[11] + "0"
-                columns[12] = columns[12] + "0"
+            if len(columns) > max(ort_pos_breite_index, ort_pos_hoehe_index):
+                columns[ort_pos_breite_index] = columns[ort_pos_breite_index] + "0"
+                columns[ort_pos_hoehe_index] = columns[ort_pos_hoehe_index] + "0"
                 updated_line = ";".join(columns)
                 updated_content.append(updated_line)
             else:
-                # Add a warning message or handle the case when there are not enough columns
                 print(f"Warning: Line has fewer columns than expected - {line}")
                 updated_content.append(line)
         else:

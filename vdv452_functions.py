@@ -233,8 +233,8 @@ def save_updated_vdv452_zip(zip_path, tempdir):
         for foldername, subfolders, filenames in os.walk(tempdir):
             for filename in filenames:
                 file_path = os.path.join(foldername, filename)
-                new_zip = zip_ref.write(file_path, os.path.relpath(file_path, tempdir))
-                return new_zip
+                zip_ref.write(file_path, os.path.relpath(file_path, tempdir))
+    return zip_path
 
 def check_empty_coordinates(file_path):
     empty_coordinates = []

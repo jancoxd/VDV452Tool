@@ -150,9 +150,9 @@ def update_coordinates(content):
             header_row = line.split(";")
             try:
                 ort_pos_breite_index = header_row.index("ORT_POS_BREITE")
-                ort_pos_hoehe_index = header_row.index("ORT_POS_HOEHE")
+                ort_pos_hoehe_index = header_row.index("ORT_POS_LAENGE")
             except ValueError:
-                print("Error: ORT_POS_BREITE or ORT_POS_HOEHE not found in the header row.")
+                print("Error: ORT_POS_BREITE or ORT_POS_LAENGE not found in the header row.")
                 return content
             updated_content.append(line)
 

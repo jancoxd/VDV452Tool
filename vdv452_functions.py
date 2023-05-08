@@ -126,26 +126,7 @@ def validate_files(zip_path):
     return result
 
 
-def apply_update_coordinates(zip_path):
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                zip_ref.extractall(temp_dir)
-    # Extract the zip file
 
-    # Read the rec_ort.x10 file
-            rec_ort_content = readlines_from_file("extracted_files/rec_ort.x10")
-
-    # Update the coordinates
-            updated_rec_ort_content = update_coordinates(rec_ort_content)
-
-    # Write the updated content back to the file
-            write_file("extracted_files/rec_ort.x10", updated_rec_ort_content)
-
-    # Create a new zip file with the updated content
-            new_zip_path = save_updated_vdv452_zip(zip_path, temp_dir)
-
-    # Return the path to the new zip file
-    return new_zip_path
 
 def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
     stop_coordinates = []

@@ -1,1 +1,2 @@
 routingpy == 1.2.1
+tqdm == 2.2.3

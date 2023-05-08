@@ -51,7 +51,6 @@ if uploaded_file is not None:
                 )
 
             # Remove the temporary files
-            os.remove(temp_path)
             os.remove(new_zip_path)
         except Exception as e:
             st.error(f'Error processing the VDV zip file: {str(e)}')

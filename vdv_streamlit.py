@@ -3,7 +3,7 @@ import os
 from zipfile import ZipFile, ZIP_DEFLATED
 from vdv452_functions import apply_update_coordinates, extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
-st.title('VDV452 Modifier v0.23b')
+st.title('VDV Tools v0.23b')
 
 uploaded_file = st.file_uploader('Upload a VDV zip file:', type=['zip'])
 
@@ -24,6 +24,7 @@ if uploaded_file is not None:
     process_button = st.button('Process VDV zip file')
     if process_button:
         try:
+            download = 1
             if selected_function == 'Switch Columns':
                 new_zip_path = switch_ort_names(temp_path)
                 print(new_zip_path)
@@ -40,21 +41,25 @@ if uploaded_file is not None:
                 check = update_zip(temp_path, 0, 3)
                 st.success(check)
                 new_zip_path = temp_path
+                download = 0
             elif selected_function == 'Update Coordinates':
 
                 new_zip_path = update_zip(temp_path, 0, 2)
+                print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
 
             st.success('Successfully processed the VDV zip file.')
 
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:
-                st.download_button(
-                    label='Download the updated VDV zip file',
-                    data=f,
-                    file_name='vdv_updated.zip',
-                    mime='application/zip'
-                )
+                if download == 1:
+                    st.download_button(
+                        label='Download the updated VDV zip file',
+                        data=f,
+                        file_name='vdv_updated.zip',
+                        mime='application/zip'
+                    )
+
 
             # Remove the temporary files
             os.remove(new_zip_path)

@@ -254,14 +254,30 @@ def save_updated_vdv452_zip(zip_path, tempdir):
 
 def check_empty_coordinates(file_path):
     empty_coordinates = []
+    header_row = None
+    ort_pos_breite_index = None
+    ort_pos_hoehe_index = None
+
     with open(file_path, 'r', encoding='iso-8859-1') as file:
         lines = file.readlines()
 
     for index, line in enumerate(lines, start=1):
-        if line.startswith("rec;"):
+        if not header_row and line.startswith("chs;"):
+            header_row = line.split(";")
+            try:
+                ort_pos_breite_index = header_row.index("ORT_POS_BREITE")
+                ort_pos_hoehe_index = header_row.index("ORT_POS_HOEHE")
+            except ValueError:
+                print("Error: ORT_POS_BREITE or ORT_POS_HOEHE not found in the header row.")
+                return empty_coordinates
+
+        elif line.startswith("rec;"):
             columns = line.split(";")
-            if not columns[11] or not columns[12]:
-                empty_coordinates.append(index)
+            if len(columns) > max(ort_pos_breite_index, ort_pos_hoehe_index):
+                if not columns[ort_pos_breite_index] or not columns[ort_pos_hoehe_index]:
+                    empty_coordinates.append(index)
+            else:
+                print(f"Warning: Line has fewer columns than expected - {line}")
 
     return empty_coordinates
 

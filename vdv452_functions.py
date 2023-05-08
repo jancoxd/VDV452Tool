@@ -118,6 +118,27 @@ def validate_files(zip_path):
         result = "All required files and columns are present."
 
     return result
+
+
+def apply_update_coordinates(zip_path):
+    # Extract the zip file
+    extract_vdv452_zip(zip_path)
+
+    # Read the rec_ort.x10 file
+    rec_ort_content = readlines_from_file("extracted_files/rec_ort.x10")
+
+    # Update the coordinates
+    updated_rec_ort_content = update_coordinates(rec_ort_content)
+
+    # Write the updated content back to the file
+    write_file("extracted_files/rec_ort.x10", updated_rec_ort_content)
+
+    # Create a new zip file with the updated content
+    new_zip_path = save_updated_vdv452_zip(zip_path)
+
+    # Return the path to the new zip file
+    return new_zip_path
+
 def update_coordinates(content):
     updated_content = []
     for line in content:

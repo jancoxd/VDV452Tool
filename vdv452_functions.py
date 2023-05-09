@@ -155,6 +155,7 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
 
     try:
         ort_nr_index = header_rec_ort.index("ORT_NR")
+        st.write("rec_ort.x10 done")
     except ValueError:
         st.write("Error: 'ORT_NR' not found in rec_ort.x10")
         return []

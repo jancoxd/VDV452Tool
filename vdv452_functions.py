@@ -155,6 +155,11 @@ def get_stop_coordinates(zip_path):
             return common_stop_coordinates
 
 
+def get_stop_coordinates(zip_path):
+    # Your get_stop_coordinates function implementation here
+    pass
+
+
 def get_routing(origin, destination, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
@@ -163,7 +168,7 @@ def get_routing(origin, destination, client):
 
 
 def create_deadhead_catalog(zip_path):
-    api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
+    api_key = 'your_api_key'
     stops_coordinates = get_stop_coordinates(zip_path)
     lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
     client = MapboxValhalla(api_key=api_key)

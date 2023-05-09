@@ -224,7 +224,7 @@ def create_deadhead_catalog(zip_path):
 
 
     progress_bar = st.progress(0)
-    total_combinations = len(combinations.iterrows())
+    total_combinations = len(combinations)
 
     for i, row in combinations.iterrows():
         try:
@@ -234,7 +234,11 @@ def create_deadhead_catalog(zip_path):
         results.append(result)
 
         # Update the progress bar
-        progress_bar.progress((i + 1) / (total_combinations + 1))
+        try:
+            progress_bar.progress((i + 1) / (total_combinations + 1))
+
+        except Exception as e:
+            pass
 
     results_df = pd.DataFrame(results, columns=['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance'])
 

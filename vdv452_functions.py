@@ -187,14 +187,14 @@ def create_deadhead_catalog(zip_path):
     st.write("combinations:", combinations)
     results = []
 
-        for i, row in combinations.iterrows():
-            try:
-                result = get_routing(row, client)
-            except Exception as e:
-                st.write("Error:", e)
-                st.write(traceback.format_exc())
-                pass
-            results.append(result)
+    for i, row in combinations.iterrows():
+        try:
+            result = get_routing(row, client)
+        except Exception as e:
+            st.write("Error:", e)
+            st.write(traceback.format_exc())
+            pass
+        results.append(result)
 
     columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
     deadhead_catalog = pd.DataFrame(results, columns=columns)

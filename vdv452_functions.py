@@ -161,6 +161,7 @@ def get_stop_coordinates(zip_path):
             start_end_stops = lid_verlauf_data.groupby('Route')['ORT_NR'].agg(['first', 'last'])
 
             common_stop_coordinates = [rec_ort_data[ort_nr] for ort_nr in start_end_stops.values.flatten() if ort_nr in rec_ort_data]
+            st.write(common_stop_coordinates)
             return common_stop_coordinates
 
 

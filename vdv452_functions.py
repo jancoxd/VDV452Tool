@@ -151,7 +151,7 @@ def get_stop_coordinates(zip_path):
             lid_verlauf_li_nr_idx = lid_verlauf_headers.index('LI_NR')
             lid_verlauf_li_lfd_nr_idx = lid_verlauf_headers.index('LI_LFD_NR')
 
-            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]], rec_ort_ort_nr_idx) for row in rec_ort_reader if row[0].strip() == 'rec'}
+            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]], row[rec_ort_ort_nr_idx]) for row in rec_ort_reader if row[0].strip() == 'rec'}
             lid_verlauf_data = {(row[lid_verlauf_str_li_var_idx], row[lid_verlauf_li_nr_idx]): (row[lid_verlauf_ort_nr_idx], row[lid_verlauf_li_lfd_nr_idx]) for row in lid_verlauf_reader if row[0].strip() == 'rec'}
 
             # Group by STR_LI_VAR and LI_NR, and get the ORT_NR for the min and max LI_LFD_NR in each group

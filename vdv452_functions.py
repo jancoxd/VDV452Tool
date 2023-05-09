@@ -133,40 +133,21 @@ def validate_files(zip_path):
 def get_stop_coordinates(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         with zip_ref.open('rec_ort.x10') as rec_ort_file, zip_ref.open('lid_verlauf.x10') as lid_verlauf_file:
-            rec_ort_reader = csv.reader((line.decode('iso-8859-1') for line in rec_ort_file), delimiter=';')
-            lid_verlauf_reader = csv.reader((line.decode('iso-8859-1') for line in lid_verlauf_file), delimiter=';')
+            rec_ort_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in rec_ort_file), delimiter=';')
+            lid_verlauf_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in lid_verlauf_file), delimiter=';')
 
-            rec_ort_headers = [header.strip() for header in next(rec_ort_reader)]
-            lid_verlauf_headers = [header.strip() for header in next(lid_verlauf_reader)]
+            rec_ort_headers = next(row for row in rec_ort_reader if row[0].strip() == 'atr')
+            lid_verlauf_headers = next(row for row in lid_verlauf_reader if row[0].strip() == 'atr')
 
-            st.write("rec_ort_headers:", rec_ort_headers)
-            st.write("lid_verlauf_headers:", lid_verlauf_headers)
+            rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
+            rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_HOEHE'))
+            lid_verlauf_ort_nr_idx = lid_verlauf_headers.index('ORT_NR')
 
-            ort_nr_index = rec_ort_headers.index('ORT_NR')
-            ort_pos_breite_index = rec_ort_headers.index('ORT_POS_BREITE')
-            ort_pos_laenge_index = rec_ort_headers.index('ORT_POS_LAENGE')
+            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]]) for row in rec_ort_reader if row[0].strip() == 'rec'}
+            lid_verlauf_data = {row[lid_verlauf_ort_nr_idx] for row in lid_verlauf_reader if row[0].strip() == 'rec'}
 
-            rec_ort_dict = {}
-            for row in rec_ort_reader:
-                rec_ort_dict[row[ort_nr_index]] = (row[ort_pos_breite_index], row[ort_pos_laenge_index])
-
-            lid_verlauf_ort_nr_index = None
-            for index, header in enumerate(lid_verlauf_headers):
-                if 'ORT_NR' in header.strip():
-                    lid_verlauf_ort_nr_index = index
-                    break
-
-            if lid_verlauf_ort_nr_index is None:
-                raise ValueError("ORT_NR column not found in lid_verlauf.x10")
-
-            used_coordinates = []
-            for row in lid_verlauf_reader:
-                ort_nr = row[lid_verlauf_ort_nr_index]
-                if ort_nr in rec_ort_dict:
-                    used_coordinates.append(rec_ort_dict[ort_nr])
-
-    return used_coordinates
-
+            common_stop_coordinates = [coords for ort_nr, coords in rec_ort_data.items() if ort_nr in lid_verlauf_data]
+            return common_stop_coordinates
 
 
 

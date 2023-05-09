@@ -1,5 +1,8 @@
 import streamlit as st
 import os
+import io
+import pandas as pd
+import openpyxl
 from zipfile import ZipFile, ZIP_DEFLATED
 from vdv452_functions import get_stop_coordinates, create_deadhead_catalog,  extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
@@ -81,12 +84,11 @@ if uploaded_file is not None:
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
             elif selected_function == 'Create Deadhead Catalog':
 
-                excel = create_deadhead_catalog(temp_path)
-                print(excel)
-                st.success(f'VDV452 zip file updated successfully: {str(excel)}')
+                excel_data = create_deadhead_catalog(temp_path)
+                st.success(f'VDV452 zip file updated successfully: {str(excel_data)}')
                 st.download_button(
-                    label='Download Deadhead Catalof',
-                    data=excel,
+                    label='Download Deadhead Catalog',
+                    data=excel_data,
                     file_name='deadhead.xlsx',
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )

@@ -202,13 +202,25 @@ def create_deadhead_catalog(zip_path):
             pass
         results.append(result)
 
-    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
-               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
-    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
-    excel = combinations.drop([0, 1], axis=1).to_excel(
-    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name',
+               'Destination Stop Name',
+               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time',
+               'updatedAt']
 
-    return excel
+    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+
+    # Drop columns [0, 1]
+    combinations = combinations.drop(columns=[0, 1])
+
+    # Write DataFrame to BytesIO object
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        combinations.to_excel(writer, index=False, sheet_name='Deadheads')
+
+    # Retrieve the BytesIO object's content
+    excel_data = output.getvalue()
+
+    return excel_data
 
 
 def update_coordinates(content):

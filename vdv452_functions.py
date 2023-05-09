@@ -194,6 +194,7 @@ def create_deadhead_catalog(zip_path):
     results = []
 
     for i, row in combinations.iterrows():
+        st.write(i)
         if i >= 2:
             break
 

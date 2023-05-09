@@ -194,7 +194,6 @@ def create_deadhead_catalog(zip_path):
     results = []
 
     for i, row in combinations.iterrows():
-        st.write(i)
 
         try:
             result = get_routing(row, client)
@@ -212,8 +211,6 @@ def create_deadhead_catalog(zip_path):
 
     combinations = pd.concat([results_df, pd.DataFrame(columns=columns)])
 
-    # Drop columns [0, 1]
-    combinations = combinations.drop(columns=[0, 1])
 
     # Write DataFrame to BytesIO object
     output = io.BytesIO()

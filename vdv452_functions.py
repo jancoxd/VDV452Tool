@@ -149,19 +149,19 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
             break
 
     if not header_rec_ort or not header_lid_verlauf:
-        print("Error: 'atr;' header line not found in rec_ort.x10 or lid_verlauf.x10")
+        st.write("Error: 'atr;' header line not found in rec_ort.x10 or lid_verlauf.x10")
         return []
 
     try:
         ort_nr_index = header_rec_ort.index("ORT_NR")
     except ValueError:
-        print("Error: 'ORT_NR' not found in rec_ort.x10")
+        st.write("Error: 'ORT_NR' not found in rec_ort.x10")
         return []
 
     try:
         ort_ref_ort_nr_index = header_lid_verlauf.index("ORT_NR")
     except ValueError:
-        print("Error: 'ORT_NR' not found in lid_verlauf.x10")
+        st.write("Error: 'ORT_NR' not found in lid_verlauf.x10")
         return []
 
     rec_ort_coordinates = {}
@@ -172,7 +172,7 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
             lat, lon = columns[-2], columns[-1]
             rec_ort_coordinates[ort_nr] = (lat, lon)
 
-    print("rec_ort_coordinates:", rec_ort_coordinates)
+    st.write("rec_ort_coordinates:", rec_ort_coordinates)
 
     lid_verlauf_ort_nrs = set()
     for line in lid_verlauf_lines:
@@ -181,7 +181,7 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
             ort_nr = columns[ort_ref_ort_nr_index]
             lid_verlauf_ort_nrs.add(ort_nr)
 
-    print("lid_verlauf_ort_nrs:", lid_verlauf_ort_nrs)
+    st.write("lid_verlauf_ort_nrs:", lid_verlauf_ort_nrs)
 
     coordinates = []
     for ort_nr in lid_verlauf_ort_nrs:

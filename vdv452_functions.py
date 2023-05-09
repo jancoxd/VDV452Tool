@@ -173,7 +173,7 @@ def create_deadhead_catalog(zip_path):
     stops_coordinates = get_stop_coordinates(zip_path)
     st.write("Stops coordinates:", stops_coordinates)
 
-    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_HOEHE', 'ORT_POS_BREITE']).drop_duplicates()
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_LAENGE', 'ORT_POS_BREITE']).drop_duplicates()
     lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
     lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
 

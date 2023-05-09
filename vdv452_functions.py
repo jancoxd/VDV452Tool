@@ -144,8 +144,7 @@ def get_stop_coordinates(zip_path):
             lid_verlauf_headers = [header.strip() for header in lid_verlauf_headers]
 
 
-            st.write("rec_ort_headers:", rec_ort_headers)
-            st.write("lid_verlauf_headers:", lid_verlauf_headers)
+
 
             rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
             rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_LAENGE'))
@@ -155,7 +154,6 @@ def get_stop_coordinates(zip_path):
             lid_verlauf_data = {row[lid_verlauf_ort_nr_idx] for row in lid_verlauf_reader if row[0].strip() == 'rec'}
 
             common_stop_coordinates = [coords for ort_nr, coords in rec_ort_data.items() if ort_nr in lid_verlauf_data]
-            st.write(common_stop_coordinates)
             return common_stop_coordinates
 
 
@@ -174,13 +172,11 @@ def get_routing(row, client):
 def create_deadhead_catalog(zip_path):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
     stops_coordinates = get_stop_coordinates(zip_path)
-    st.write("Stops coordinates:", stops_coordinates)
 
     lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_LAENGE', 'ORT_POS_BREITE', 'ORT_NR']).drop_duplicates()
     lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
     lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
 
-    st.write("lat_lon:", lat_lon)
 
     client = MapboxValhalla(api_key=api_key)
 

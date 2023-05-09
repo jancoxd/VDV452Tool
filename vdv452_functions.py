@@ -164,7 +164,6 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    st.write(route)
     return [int(route.duration / 60), route.distance / 1000]
 
 
@@ -193,7 +192,7 @@ def create_deadhead_catalog(zip_path):
     except Exception as e:
         st.write("Error:", e)
         st.write(traceback.format_exc())
-
+        pass
     columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
     deadhead_catalog = pd.DataFrame(results, columns=columns)
     return deadhead_catalog

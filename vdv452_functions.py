@@ -159,13 +159,13 @@ def get_stop_coordinates(zip_path):
 
 
 
-
 def get_routing(row, client):
-    origin, destination = row[1], row[0]
+    origin, destination = row[0], row[1]
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    return [origin, destination, int(route.duration / 60), route.distance / 1000]
+    st.write(route)
+    return [int(route.duration / 60), route.distance / 1000]
 
 
 def create_deadhead_catalog(zip_path):

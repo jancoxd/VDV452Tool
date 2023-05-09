@@ -7,9 +7,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import pandas as pd
 from routingpy.routers import MapboxValhalla
 import itertools
-from tqdm import tqdm
 import geopy.distance
-import numpy as np
 import csv
 
 encoding = "iso-8859-1"
@@ -174,7 +172,7 @@ def create_deadhead_catalog(zip_path):
 
     for i, row in combinations.iterrows():
         origin_destination = (row[0], row[1])
-        result = get_routing(origin_destination, client)
+        result = get_routing(origin_destination, client, stops_coordinates)
         combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
         progress_bar.progress((i + 1) / total_combinations)
 
@@ -190,12 +188,16 @@ def crow_distance(origin, destination):
     destination_lat, destination_lon = destination[1], destination[0]
     return geopy.distance.geodesic((origin_lat, origin_lon), (destination_lat, destination_lon)).km
 
-def get_routing(row, client):
+def get_routing(row, client, stops_coordinates):
     origin, destination = row[0], row[1]
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    return [origin, destination, int(route.duration / 60), route.distance / 1000]
+    origin_id = stops_coordinates[(stops_coordinates['ORT_POS_BREITE'] == origin_lat) & (
+        stops_coordinates['ORT_POS_LAENGE'] == origin_lon)]['ORT_NR'].values[0]
+    destination_id = stops_coordinates[(stops_coordinates['ORT_POS_BREITE'] == destination_lat) & (
+        stops_coordinates['ORT_POS_LAENGE'] == destination_lon)]['ORT_NR'].values[0]
+    return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
 
 def update_coordinates(content):
     updated_content = []

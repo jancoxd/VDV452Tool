@@ -183,8 +183,12 @@ def create_deadhead_catalog(zip_path):
 
     coords = [[lat, lon] for lat, lon in lat_lon.values.tolist()]
     combinations = pd.DataFrame([p for p in itertools.product(coords, repeat=2)])
-    combinations = combinations[(combinations[0] != combinations[1])]
+    combinations["ordered_combinations"] = combinations.apply(lambda x: tuple(sorted([x["origin"], x["destination"]])), axis=1)
+    combinations.drop_duplicates(subset="ordered_combinations", inplace=True)
+    combinations.drop(columns="ordered_combinations", inplace=True)
     st.write("combinations:", combinations)
+
+
     results = []
     try:
         for i, row in combinations.iterrows():

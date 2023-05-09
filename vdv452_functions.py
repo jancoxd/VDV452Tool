@@ -10,6 +10,7 @@ import itertools
 from tqdm import tqdm
 import geopy.distance
 import numpy as np
+import csv
 
 encoding = "iso-8859-1"
 
@@ -129,69 +130,32 @@ def validate_files(zip_path):
 
 
 
-def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
-    with open(rec_ort_path, 'r', encoding='iso-8859-1') as f:
-        rec_ort_lines = f.readlines()
+def get_stop_coordinates(zip_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        with zip_ref.open('rec_ort.x10') as rec_ort_file, zip_ref.open('lid_verlauf.x10') as lid_verlauf_file:
+            rec_ort_reader = csv.reader((line.decode('iso-8859-1') for line in rec_ort_file), delimiter=';')
+            lid_verlauf_reader = csv.reader((line.decode('iso-8859-1') for line in lid_verlauf_file), delimiter=';')
 
-    with open(lid_verlauf_path, 'r', encoding='iso-8859-1') as f:
-        lid_verlauf_lines = f.readlines()
+            rec_ort_headers = [header.strip() for header in next(rec_ort_reader)]
+            lid_verlauf_headers = [header.strip() for header in next(lid_verlauf_reader)]
 
-    header_rec_ort = None
-    header_lid_verlauf = None
+            ort_nr_index = rec_ort_headers.index('ORT_NR')
+            ort_pos_breite_index = rec_ort_headers.index('ORT_POS_BREITE')
+            ort_pos_laenge_index = rec_ort_headers.index('ORT_POS_LAENGE')
 
-    for line in rec_ort_lines:
-        if line.startswith("atr;"):
-            header_rec_ort = line.strip().split(";")
-            break
+            rec_ort_dict = {}
+            for row in rec_ort_reader:
+                rec_ort_dict[row[ort_nr_index]] = (row[ort_pos_breite_index], row[ort_pos_laenge_index])
 
-    for line in lid_verlauf_lines:
-        if line.startswith("atr;"):
-            header_lid_verlauf = line.strip().split(";")
-            st.write(str(header_lid_verlauf))
-            break
+            lid_verlauf_ort_nr_index = lid_verlauf_headers.index('ORT_NR')
 
-    if not header_rec_ort or not header_lid_verlauf:
-        st.write("Error: 'atr;' header line not found in rec_ort.x10 or lid_verlauf.x10")
-        return []
+            used_coordinates = []
+            for row in lid_verlauf_reader:
+                ort_nr = row[lid_verlauf_ort_nr_index]
+                if ort_nr in rec_ort_dict:
+                    used_coordinates.append(rec_ort_dict[ort_nr])
 
-    try:
-        ort_nr_index = header_rec_ort.index("ORT_NR")
-        st.write("rec_ort.x10 done")
-    except ValueError:
-        st.write("Error: 'ORT_NR' not found in rec_ort.x10")
-        return []
-
-    try:
-        ort_ref_ort_nr_index = header_lid_verlauf.index("ORT_NR")
-    except ValueError:
-        st.write("Error: 'ORT_NR' not found in lid_verlauf.x10")
-        return []
-
-    rec_ort_coordinates = {}
-    for line in rec_ort_lines:
-        if line.startswith("rec;"):
-            columns = line.strip().split(";")
-            ort_nr = columns[ort_nr_index]
-            lat, lon = columns[-2], columns[-1]
-            rec_ort_coordinates[ort_nr] = (lat, lon)
-
-    st.write("rec_ort_coordinates:", rec_ort_coordinates)
-
-    lid_verlauf_ort_nrs = set()
-    for line in lid_verlauf_lines:
-        if line.startswith("rec;"):
-            columns = line.strip().split(";")
-            ort_nr = columns[ort_ref_ort_nr_index]
-            lid_verlauf_ort_nrs.add(ort_nr)
-
-    st.write("lid_verlauf_ort_nrs:", lid_verlauf_ort_nrs)
-
-    coordinates = []
-    for ort_nr in lid_verlauf_ort_nrs:
-        if ort_nr in rec_ort_coordinates:
-            coordinates.append(rec_ort_coordinates[ort_nr])
-
-    return coordinates
+    return used_coordinates
 
 
 

@@ -180,8 +180,8 @@ def create_deadhead_catalog(zip_path):
     total_combinations = len(combinations)
 
     for i, row in combinations.iterrows():
-        origin, destination = row[0], row[1]
-        result = get_routing(origin, destination)
+        origin_destination = (row[0], row[1])
+        result = get_routing(origin_destination)
         combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
         progress_bar.progress((i + 1) / total_combinations)
 

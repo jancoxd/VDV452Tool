@@ -181,7 +181,7 @@ def create_deadhead_catalog(zip_path):
 
     for i, row in combinations.iterrows():
         origin_destination = (row[0], row[1])
-        result = get_routing(origin_destination)
+        result = get_routing(origin_destination, client)
         combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
         progress_bar.progress((i + 1) / total_combinations)
 
@@ -201,7 +201,7 @@ def crow_distance(origin, destination):
     destination_lat, destination_lon = destination[1], destination[0]
     return geopy.distance.geodesic((origin_lat, origin_lon), (destination_lat, destination_lon)).km
 
-def get_routing(row):
+def get_routing(row, client):
     origin, destination = row[0], row[1]
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]

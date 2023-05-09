@@ -166,10 +166,6 @@ def get_routing(row, client):
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
     st.write(route)
-    origin_id = stops[(stops.stop_lat == origin_lat) & (
-        stops.stop_lon == origin_lon)].stop_id.values[0]
-    destination_id = stops[(stops.stop_lat == destination_lat) & (
-        stops.stop_lon == destination_lon)].stop_id.values[0]
     return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
 
 
@@ -178,7 +174,7 @@ def create_deadhead_catalog(zip_path):
     stops_coordinates = get_stop_coordinates(zip_path)
     st.write("Stops coordinates:", stops_coordinates)
 
-    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_HOEHE', 'ORT_POS_BREITE']).drop_duplicates()
     st.write("lat_lon:", lat_lon)
 
     client = MapboxValhalla(api_key=api_key)

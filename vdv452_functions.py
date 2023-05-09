@@ -170,7 +170,7 @@ def get_routing(row, client):
     st.write(origin)
     route = client.directions(locations=[(origin[0],origin[1]), (destination[0],destination[1])], profile='bus')
     st.write(route)
-    return [origin_ort,destination_ort,(route.duration / 60), route.distance / 1000]
+    st.write([origin_ort,destination_ort,(route.duration / 60), route.distance / 1000])
 
 
 def create_deadhead_catalog(zip_path):

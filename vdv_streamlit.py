@@ -81,7 +81,7 @@ if uploaded_file is not None:
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
             elif selected_function == 'Create Deadhead Catalog':
 
-                new_zip_path = get_stop_coordinates(temp_path)
+                new_zip_path = create_deadhead_catalog(temp_path)
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {str(new_zip_path)}')
 

@@ -138,6 +138,8 @@ def get_stop_coordinates(zip_path):
 
             rec_ort_headers = [header.strip() for header in next(rec_ort_reader)]
             lid_verlauf_headers = [header.strip() for header in next(lid_verlauf_reader)]
+            st.write(str(rec_ort_headers.index))
+            st.write(str(lid_verlauf_headers.index))
 
             ort_nr_index = rec_ort_headers.index('ORT_NR')
             ort_pos_breite_index = rec_ort_headers.index('ORT_POS_BREITE')
@@ -147,7 +149,7 @@ def get_stop_coordinates(zip_path):
             for row in rec_ort_reader:
                 rec_ort_dict[row[ort_nr_index]] = (row[ort_pos_breite_index], row[ort_pos_laenge_index])
 
-            lid_verlauf_ort_nr_index = lid_verlauf_headers.index(' ORT_NR')
+            lid_verlauf_ort_nr_index = lid_verlauf_headers.index('ORT_NR')
 
             used_coordinates = []
             for row in lid_verlauf_reader:

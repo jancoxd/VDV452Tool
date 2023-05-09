@@ -185,7 +185,7 @@ def create_deadhead_catalog(zip_path):
     client = MapboxValhalla(api_key=api_key)
 
     coords = [[lat, lon, ort_nr] for lat, lon, ort_nr in lat_lon.values.tolist()]
-    combinations = pd.DataFrame([p for p in itertools.product(itertools.product(coords, repeat=2), 50)])
+    combinations = pd.DataFrame([p for p in itertools.islice(itertools.product(coords, repeat=2), 50)])
     combinations = combinations[combinations[0] != combinations[1]]  # Exclude pairs with the same coordinates
     combinations = combinations.apply(lambda x: tuple(sorted([tuple(x[0]), tuple(x[1])])), axis=1)  # Sort pairs and convert to tuple
     combinations = pd.DataFrame(combinations.tolist()).drop_duplicates()  # Remove duplicates

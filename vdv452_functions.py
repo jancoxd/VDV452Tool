@@ -149,7 +149,7 @@ def get_stop_coordinates(zip_path):
 
             lid_verlauf_ort_nr_index = None
             for index, header in enumerate(lid_verlauf_headers):
-                if header.strip() == 'ORT_NR':
+                if 'ORT_NR' in header.strip():
                     lid_verlauf_ort_nr_index = index
                     break
 

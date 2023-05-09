@@ -197,10 +197,10 @@ def create_deadhead_catalog(zip_path):
 
     results = []
 
-
+    st.write("Progress")
     progress_bar = st.progress(0)
     total_combinations = len(combinations)
-    st.write("Progress")
+
     for i, row in combinations.iterrows():
         try:
             result = get_routing(row, client)

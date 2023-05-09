@@ -81,17 +81,15 @@ if uploaded_file is not None:
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
             elif selected_function == 'Create Deadhead Catalog':
 
-                new_zip_path = create_deadhead_catalog(temp_path)
-                print(new_zip_path)
-                st.success(f'VDV452 zip file updated successfully: {str(new_zip_path)}')
-                with open(new_zip_path, 'rb') as f:
-                    if download == 1:
-                        st.download_button(
-                            label='Download Deadhead Catalof',
-                            data=f,
-                            file_name='deadhead.xlsx',
-                            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                        )
+                excel = create_deadhead_catalog(temp_path)
+                print(excel)
+                st.success(f'VDV452 zip file updated successfully: {str(excel)}')
+                st.download_button(
+                    label='Download Deadhead Catalof',
+                    data=excel,
+                    file_name='deadhead.xlsx',
+                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:
                 if download == 1:

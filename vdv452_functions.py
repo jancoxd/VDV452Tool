@@ -208,6 +208,7 @@ def create_deadhead_catalog(zip_path):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
 
     stops = get_stop_coordinates_from_zip(zip_path)
+    print('check')
     lat_lon = stops['ORT_POS_BREITE', 'ORT_POS_LAENGE'].drop_duplicates()
     client = MapboxValhalla(api_key=api_key)
     coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]

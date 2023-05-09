@@ -171,10 +171,8 @@ def get_stop_coordinates(zip_path):
 
 def get_routing(row, client):
     origin, destination = row[0], row[1]
-    origin_lat, origin_lon = origin[1], origin[0]
     origin_ort, destination_ort = origin[2], destination[2]
-    destination_lat, destination_lon = destination[1], destination[0]
-    route = client.directions(locations=[(origin[0],origin[1]), (destination[0],destination[1])], profile='bus')
+    route = client.directions(locations=[(origin[1],origin[0]), (destination[1],destination[0])], profile='bus')
     return [origin_ort,destination_ort,(route.duration / 60), route.distance / 1000]
 
 

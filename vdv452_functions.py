@@ -2,7 +2,6 @@ import zipfile
 import os
 import tempfile
 import traceback
-
 import streamlit as st
 import shutil
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -175,6 +174,9 @@ def create_deadhead_catalog(zip_path):
     st.write("Stops coordinates:", stops_coordinates)
 
     lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_HOEHE', 'ORT_POS_BREITE']).drop_duplicates()
+    lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
+    lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
+
     st.write("lat_lon:", lat_lon)
 
     client = MapboxValhalla(api_key=api_key)

@@ -234,7 +234,7 @@ def create_deadhead_catalog(zip_path):
         results.append(result)
 
         # Update the progress bar
-        progress_bar.progress((i + 1) / total_combinations)
+        progress_bar.progress((i + 1) / (total_combinations + 1))
 
     results_df = pd.DataFrame(results, columns=['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance'])
 

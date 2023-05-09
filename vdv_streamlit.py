@@ -85,13 +85,14 @@ if uploaded_file is not None:
             elif selected_function == 'Create Deadhead Catalog':
 
                 excel_data = create_deadhead_catalog(temp_path)
-                st.success(f'VDV452 zip file updated successfully: {str(excel_data)}')
+                st.success(f'Deadhead Catalog finished:')
                 st.download_button(
                     label='Download Deadhead Catalog',
                     data=excel_data,
                     file_name='deadhead.xlsx',
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )
+                new_zip_path = temp_path
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:
                 if download == 1:

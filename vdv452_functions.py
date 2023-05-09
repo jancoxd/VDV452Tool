@@ -147,6 +147,7 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
     for line in lid_verlauf_lines:
         if line.startswith("atr;"):
             header_lid_verlauf = line.strip().split(";")
+            st.write(str(header_lid_verlauf))
             break
 
     if not header_rec_ort or not header_lid_verlauf:

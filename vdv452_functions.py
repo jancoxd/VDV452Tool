@@ -186,7 +186,6 @@ def create_deadhead_catalog(zip_path):
     combinations = combinations.apply(lambda x: tuple(sorted([tuple(x[0]), tuple(x[1])])), axis=1)  # Sort pairs and convert to tuple
     combinations = pd.DataFrame(combinations.tolist()).drop_duplicates()  # Remove duplicates
 
-    st.write("combinations:", combinations)
     results = []
 
 

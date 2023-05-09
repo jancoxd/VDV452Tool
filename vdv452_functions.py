@@ -160,11 +160,16 @@ def get_stop_coordinates(zip_path):
 
 
 
-def get_routing(origin, destination, client):
+def get_routing(row, client):
+    origin, destination = row[0], row[1]
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    return [origin, destination, int(route.duration / 60), route.distance / 1000]
+    origin_id = stops[(stops.stop_lat == origin_lat) & (
+        stops.stop_lon == origin_lon)].stop_id.values[0]
+    destination_id = stops[(stops.stop_lat == destination_lat) & (
+        stops.stop_lon == destination_lon)].stop_id.values[0]
+    return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
 
 
 def create_deadhead_catalog(zip_path):
@@ -183,8 +188,7 @@ def create_deadhead_catalog(zip_path):
     st.write("combinations:", combinations)
     results = []
     for i, row in combinations.iterrows():
-        origin_destination = (row[0], row[1])
-        result = get_routing(origin_destination[0], origin_destination[1], client)
+        result = get_routing(row, client)
         results.append(result)
 
 

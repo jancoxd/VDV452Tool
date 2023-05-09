@@ -167,40 +167,38 @@ def get_routing(row, client):
     route = client.directions(locations=[origin, destination], profile='bus')
     return [1,1,(route.duration / 60), route.distance / 1000]
 
+
 def create_deadhead_catalog(zip_path):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
-
     stops_coordinates = get_stop_coordinates(zip_path)
-    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
-    client = MapboxValhalla(api_key=api_key)
-    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
+    st.write("Stops coordinates:", stops_coordinates)
+
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_LAENGE', 'ORT_POS_BREITE']).drop_duplicates()
     lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
     lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
 
-    combinations = pd.DataFrame(
-        [p for p in itertools.product(coords, repeat=2)])
+    st.write("lat_lon:", lat_lon)
 
-    combinations = combinations[(combinations[0] != combinations[1])].drop_duplicates()
-    progress_bar = st.progress(0)
-    total_combinations = len(combinations)
+    client = MapboxValhalla(api_key=api_key)
 
+    coords = [[lat, lon] for lat, lon in lat_lon.values.tolist()]
+    combinations = pd.DataFrame([p for p in itertools.product(coords, repeat=2)])
+    combinations = combinations[(combinations[0] != combinations[1])]
+    combinations = combinations.drop_duplicates()  # Remove duplicates
+
+    st.write("combinations:", combinations)
+    results = []
     try:
         for i, row in combinations.iterrows():
-            origin_destination = (row[0], row[1])
-            result = get_routing(origin_destination, client)
-            combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
-            progress_bar.progress((i + 1) / total_combinations)
+            result = get_routing(row, client)
+            results.append(result)
     except Exception as e:
         st.write("Error:", e)
         st.write(traceback.format_exc())
-
-    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
-               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
-    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
-    excel = combinations.drop([0, 1], axis=1).to_excel(
-    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
-    return excel
-
+        pass
+    columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
+    deadhead_catalog = pd.DataFrame(results, columns=columns)
+    return deadhead_catalog
 
 
 def update_coordinates(content):

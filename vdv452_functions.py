@@ -172,6 +172,8 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
             lat, lon = columns[-2], columns[-1]
             rec_ort_coordinates[ort_nr] = (lat, lon)
 
+    print("rec_ort_coordinates:", rec_ort_coordinates)
+
     lid_verlauf_ort_nrs = set()
     for line in lid_verlauf_lines:
         if line.startswith("rec;"):
@@ -179,12 +181,15 @@ def get_stop_coordinates(rec_ort_path, lid_verlauf_path):
             ort_nr = columns[ort_ref_ort_nr_index]
             lid_verlauf_ort_nrs.add(ort_nr)
 
+    print("lid_verlauf_ort_nrs:", lid_verlauf_ort_nrs)
+
     coordinates = []
     for ort_nr in lid_verlauf_ort_nrs:
         if ort_nr in rec_ort_coordinates:
             coordinates.append(rec_ort_coordinates[ort_nr])
 
     return coordinates
+
 
 
 def get_stop_coordinates_from_zip(zip_path):

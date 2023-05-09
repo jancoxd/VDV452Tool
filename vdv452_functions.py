@@ -189,13 +189,19 @@ def create_deadhead_catalog(zip_path):
     st.write("combinations:", combinations)
     results = []
 
-    for i, row in combinations.iterrows():
 
+    progress_bar = st.progress(0)
+    total_combinations = len(combinations)
+
+    for i, row in combinations.iterrows():
         try:
             result = get_routing(row, client)
         except Exception as e:
             pass
         results.append(result)
+
+        # Update the progress bar
+        progress_bar.progress((i + 1) / total_combinations)
 
     results_df = pd.DataFrame(results, columns=['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance'])
 

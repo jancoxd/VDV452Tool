@@ -170,7 +170,11 @@ def get_routing(origin, destination, client):
 def create_deadhead_catalog(zip_path):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
     stops_coordinates = get_stop_coordinates(zip_path)
+    st.write("Stops coordinates:", stops_coordinates)
+
     lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
+    st.write("lat_lon:", lat_lon)
+
     client = MapboxValhalla(api_key=api_key)
 
     coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]

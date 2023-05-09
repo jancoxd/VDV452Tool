@@ -129,9 +129,42 @@ def validate_files(zip_path):
     return result
 
 
-
-
 def get_stop_coordinates(zip_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        with zip_ref.open('rec_ort.x10') as rec_ort_file, zip_ref.open('lid_verlauf.x10') as lid_verlauf_file:
+            rec_ort_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in rec_ort_file), delimiter=';')
+            lid_verlauf_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in lid_verlauf_file), delimiter=';')
+
+            rec_ort_headers = next(row for row in rec_ort_reader if row[0].strip() == 'atr')
+            lid_verlauf_headers = next(row for row in lid_verlauf_reader if row[0].strip() == 'atr')
+
+            rec_ort_headers = [header.strip() for header in rec_ort_headers]
+            lid_verlauf_headers = [header.strip() for header in lid_verlauf_headers]
+
+            st.write("rec_ort_headers:", rec_ort_headers)
+            st.write("lid_verlauf_headers:", lid_verlauf_headers)
+
+            rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
+            rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_LAENGE'))
+            lid_verlauf_ort_nr_idx = lid_verlauf_headers.index('ORT_NR')
+            lid_verlauf_str_li_var_idx = lid_verlauf_headers.index('STR_LI_VAR')
+            lid_verlauf_li_nr_idx = lid_verlauf_headers.index('LI_NR')
+            lid_verlauf_li_lfd_nr_idx = lid_verlauf_headers.index('LI_LFD_NR')
+
+            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]]) for row in rec_ort_reader if row[0].strip() == 'rec'}
+            lid_verlauf_data = {(row[lid_verlauf_str_li_var_idx], row[lid_verlauf_li_nr_idx]): (row[lid_verlauf_ort_nr_idx], row[lid_verlauf_li_lfd_nr_idx]) for row in lid_verlauf_reader if row[0].strip() == 'rec'}
+
+            # Group by STR_LI_VAR and LI_NR, and get the ORT_NR for the min and max LI_LFD_NR in each group
+            lid_verlauf_data = pd.DataFrame(lid_verlauf_data.items(), columns=['Route', 'Data'])
+            lid_verlauf_data[['ORT_NR', 'LI_LFD_NR']] = pd.DataFrame(lid_verlauf_data['Data'].tolist(), index=lid_verlauf_data.index)
+            lid_verlauf_data['LI_LFD_NR'] = lid_verlauf_data['LI_LFD_NR'].astype(int)
+            start_end_stops = lid_verlauf_data.groupby('Route')['ORT_NR'].agg(['first', 'last'])
+
+            common_stop_coordinates = [rec_ort_data[ort_nr] for ort_nr in start_end_stops.values.flatten() if ort_nr in rec_ort_data]
+            return common_stop_coordinates
+
+
+def get_stop_coordinates_old(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         with zip_ref.open('rec_ort.x10') as rec_ort_file, zip_ref.open('lid_verlauf.x10') as lid_verlauf_file:
             rec_ort_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in rec_ort_file), delimiter=';')

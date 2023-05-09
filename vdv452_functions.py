@@ -198,7 +198,6 @@ def create_deadhead_catalog(zip_path):
         results.append(result)
 
     results_df = pd.DataFrame(results, columns=['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance'])
-    st.write(f"Shape of results_df: {results_df.shape}")
 
     columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name',
                'Destination Stop Name',

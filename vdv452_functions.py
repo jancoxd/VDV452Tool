@@ -167,15 +167,8 @@ def create_deadhead_catalog(zip_path):
     coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
     combinations = pd.DataFrame(
         [p for p in itertools.product(coords, repeat=2)])
-    use_threshold = 'No'
-    if use_threshold == 'YES':
-        vec_crow_distance = np.vectorize(crow_distance)
-        combinations['crow_distance'] = vec_crow_distance(combinations[0].values, combinations[1].values)
-        max_threshold = float(input('Please enter the maximum distance threshold between 2 points you want to use (km):'))
-        min_threshold = float(input('Please enter the minimum distance threshold between 2 points you want to use (km):'))
-        combinations = combinations[(combinations.crow_distance < max_threshold) & (combinations.crow_distance > min_threshold) & (combinations[0] != combinations[1])]
-    else:
-        combinations = combinations[(combinations[0] != combinations[1])]
+
+    combinations = combinations[(combinations[0] != combinations[1])]
     progress_bar = st.progress(0)
     total_combinations = len(combinations)
 
@@ -188,12 +181,8 @@ def create_deadhead_catalog(zip_path):
     columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
                'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
     combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
-    if use_threshold == 'YES':
-        excel = combinations.drop([0, 1, 'crow_distance'], axis=1).to_excel(
-        'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
-    else:
-        excel = combinations.drop([0, 1], axis=1).to_excel(
-        'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    excel = combinations.drop([0, 1], axis=1).to_excel(
+    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
     return excel
 
 def crow_distance(origin, destination):

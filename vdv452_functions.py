@@ -153,6 +153,7 @@ def get_stop_coordinates(zip_path):
             lid_verlauf_data = {row[lid_verlauf_ort_nr_idx] for row in lid_verlauf_reader if row[0].strip() == 'rec'}
 
             common_stop_coordinates = [coords for ort_nr, coords in rec_ort_data.items() if ort_nr in lid_verlauf_data]
+            st.write(common_stop_coordinates)
             return common_stop_coordinates
 
 
@@ -164,7 +165,7 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    return [int(route.duration / 60), route.distance / 1000]
+    return [origin_lat, orig(route.duration / 60), route.distance / 1000]
 
 
 def create_deadhead_catalog(zip_path):

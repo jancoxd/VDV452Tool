@@ -159,21 +159,6 @@ def get_stop_coordinates(zip_path):
 
 
 
-def get_stop_coordinates_from_zip(zip_path):
-    # Create a temporary directory
-    with tempfile.TemporaryDirectory() as tempdir:
-        # Extract the VDV zip file to the temporary directory
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(tempdir)
-
-        # Construct the file paths for rec_ort.x10 and lid_verlauf.x10
-        rec_ort_path = os.path.join(tempdir, "rec_ort.x10")
-        lid_verlauf_path = os.path.join(tempdir, "lid_verlauf.x10")
-
-        # Call the get_stop_coordinates function with the extracted file paths
-        stop_coordinates = get_stop_coordinates(rec_ort_path, lid_verlauf_path)
-
-    return stop_coordinates
 
 
 def create_deadhead_catalog(zip_path):

@@ -224,7 +224,7 @@ def create_deadhead_catalog(zip_path):
 
 
     progress_bar = st.progress(0)
-    total_combinations = len(combinations)
+    total_combinations = len(combinations.iterrows())
 
     for i, row in combinations.iterrows():
         try:

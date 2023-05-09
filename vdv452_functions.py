@@ -179,7 +179,7 @@ def create_deadhead_catalog(zip_path):
 
     client = MapboxValhalla(api_key=api_key)
 
-    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
+    coords = [[lat, lon] for lat, lon in lat_lon.values.tolist()]
     combinations = pd.DataFrame([p for p in itertools.product(coords, repeat=2)])
     combinations = combinations[(combinations[0] != combinations[1])]
     st.write("combinations:", combinations)

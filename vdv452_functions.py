@@ -168,7 +168,7 @@ def get_routing(row, client):
     origin_ort, destination_ort = origin[2], destination[2]
     destination_lat, destination_lon = destination[1], destination[0]
     st.write(origin)
-    route = client.directions(locations=[origin, destination], profile='bus')
+    route = client.directions(locations=[(origin[0],origin[1]), (destination[0],destination[1])], profile='bus')
     st.write(route)
     return [origin_ort,destination_ort,(route.duration / 60), route.distance / 1000]
 

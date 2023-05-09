@@ -165,7 +165,7 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    return [origin_lat, orig(route.duration / 60), route.distance / 1000]
+    return [1,1,(route.duration / 60), route.distance / 1000]
 
 
 def create_deadhead_catalog(zip_path):

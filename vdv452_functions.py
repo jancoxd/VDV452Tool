@@ -139,6 +139,9 @@ def get_stop_coordinates(zip_path):
             rec_ort_headers = next(row for row in rec_ort_reader if row[0].strip() == 'atr')
             lid_verlauf_headers = next(row for row in lid_verlauf_reader if row[0].strip() == 'atr')
 
+            st.write("rec_ort_headers:", rec_ort_headers)
+            st.write("lid_verlauf_headers:", lid_verlauf_headers)
+
             rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
             rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_HOEHE'))
             lid_verlauf_ort_nr_idx = lid_verlauf_headers.index('ORT_NR')

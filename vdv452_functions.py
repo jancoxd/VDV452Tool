@@ -188,15 +188,16 @@ def crow_distance(origin, destination):
     destination_lat, destination_lon = destination[1], destination[0]
     return geopy.distance.geodesic((origin_lat, origin_lon), (destination_lat, destination_lon)).km
 
-def get_routing(row, client, stops_coordinates):
+def get_routing(row, client):
     origin, destination = row[0], row[1]
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    origin_id = stops_coordinates[(stops_coordinates['ORT_POS_BREITE'] == origin_lat) & (
-        stops_coordinates['ORT_POS_LAENGE'] == origin_lon)]['ORT_NR'].values[0]
-    destination_id = stops_coordinates[(stops_coordinates['ORT_POS_BREITE'] == destination_lat) & (
-        stops_coordinates['ORT_POS_LAENGE'] == destination_lon)]['ORT_NR'].values[0]
+    st.write(route)  # Add this line to print the route object
+    origin_id = stops[(stops.stop_lat == origin_lat) & (
+        stops.stop_lon == origin_lon)].stop_id.values[0]
+    destination_id = stops[(stops.stop_lat == destination_lat) & (
+        stops.stop_lon == destination_lon)].stop_id.values[0]
     return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
 
 def update_coordinates(content):

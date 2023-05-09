@@ -155,50 +155,33 @@ def get_stop_coordinates(zip_path):
             return common_stop_coordinates
 
 
-
-def create_deadhead_catalog(zip_path):
-    api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
-
-    stops_coordinates = get_stop_coordinates(zip_path)
-    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
-    client = MapboxValhalla(api_key=api_key)
-    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
-    combinations = pd.DataFrame(
-        [p for p in itertools.product(coords, repeat=2)])
-
-    combinations = combinations[(combinations[0] != combinations[1])]
-    progress_bar = st.progress(0)
-    total_combinations = len(combinations)
-
-    for i, row in combinations.iterrows():
-        origin_destination = (row[0], row[1])
-        result = get_routing(origin_destination, client)
-        combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
-        progress_bar.progress((i + 1) / total_combinations)
-
-    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
-               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
-    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
-    excel = combinations.drop([0, 1], axis=1).to_excel(
-    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
-    return excel
-
-def crow_distance(origin, destination):
-    origin_lat, origin_lon = origin[1], origin[0]
-    destination_lat, destination_lon = destination[1], destination[0]
-    return geopy.distance.geodesic((origin_lat, origin_lon), (destination_lat, destination_lon)).km
-
-def get_routing(row, client):
-    origin, destination = row[0], row[1]
+def get_routing(origin, destination, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
-    st.write(route)  # Add this line to print the route object
-    origin_id = stops[(stops.stop_lat == origin_lat) & (
-        stops.stop_lon == origin_lon)].stop_id.values[0]
-    destination_id = stops[(stops.stop_lat == destination_lat) & (
-        stops.stop_lon == destination_lon)].stop_id.values[0]
-    return [origin_id, destination_id, int(route.duration / 60), route.distance / 1000]
+    return [origin, destination, int(route.duration / 60), route.distance / 1000]
+
+
+def create_deadhead_catalog(zip_path):
+    api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
+    stops_coordinates = get_stop_coordinates(zip_path)
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
+    client = MapboxValhalla(api_key=api_key)
+
+    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
+    combinations = pd.DataFrame([p for p in itertools.product(coords, repeat=2)])
+    combinations = combinations[(combinations[0] != combinations[1])]
+
+    results = []
+    for i, row in combinations.iterrows():
+        origin_destination = (row[0], row[1])
+        result = get_routing(origin_destination[0], origin_destination[1], client)
+        results.append(result)
+
+    columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
+    deadhead_catalog = pd.DataFrame(results, columns=columns)
+    return deadhead_catalog
+
 
 def update_coordinates(content):
     updated_content = []

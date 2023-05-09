@@ -167,40 +167,40 @@ def get_routing(row, client):
     route = client.directions(locations=[origin, destination], profile='bus')
     return [1,1,(route.duration / 60), route.distance / 1000]
 
-
 def create_deadhead_catalog(zip_path):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
-    stops_coordinates = get_stop_coordinates(zip_path)
-    st.write("Stops coordinates:", stops_coordinates)
 
-    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_LAENGE', 'ORT_POS_BREITE']).drop_duplicates()
+    stops_coordinates = get_stop_coordinates(zip_path)
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_BREITE', 'ORT_POS_LAENGE']).drop_duplicates()
+    client = MapboxValhalla(api_key=api_key)
+    coords = [[lon, lat] for lat, lon in lat_lon.values.tolist()]
     lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
     lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
 
-    st.write("lat_lon:", lat_lon)
+    combinations = pd.DataFrame(
+        [p for p in itertools.product(coords, repeat=2)])
 
-    client = MapboxValhalla(api_key=api_key)
+    combinations = combinations[(combinations[0] != combinations[1])].drop_duplicates()
+    progress_bar = st.progress(0)
+    total_combinations = len(combinations)
 
-    coords = [[lat, lon] for lat, lon in lat_lon.values.tolist()]
-    combinations = pd.DataFrame([p for p in itertools.product(coords, repeat=2)])
-    combinations["ordered_combinations"] = combinations.apply(lambda x: tuple(sorted([x["origin"], x["destination"]])), axis=1)
-    combinations.drop_duplicates(subset="ordered_combinations", inplace=True)
-    combinations.drop(columns="ordered_combinations", inplace=True)
-    st.write("combinations:", combinations)
-
-
-    results = []
     try:
         for i, row in combinations.iterrows():
-            result = get_routing(row, client)
-            results.append(result)
+            origin_destination = (row[0], row[1])
+            result = get_routing(origin_destination, client)
+            combinations.at[i, ['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = result
+            progress_bar.progress((i + 1) / total_combinations)
     except Exception as e:
         st.write("Error:", e)
         st.write(traceback.format_exc())
-        pass
-    columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
-    deadhead_catalog = pd.DataFrame(results, columns=columns)
-    return deadhead_catalog
+
+    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
+               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
+    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+    excel = combinations.drop([0, 1], axis=1).to_excel(
+    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    return excel
+
 
 
 def update_coordinates(content):

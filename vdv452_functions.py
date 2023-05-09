@@ -165,6 +165,7 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     destination_lat, destination_lon = destination[1], destination[0]
     route = client.directions(locations=[origin, destination], profile='bus')
+    st.write(route)
     origin_id = stops[(stops.stop_lat == origin_lat) & (
         stops.stop_lon == origin_lon)].stop_id.values[0]
     destination_id = stops[(stops.stop_lat == destination_lat) & (

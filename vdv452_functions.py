@@ -165,31 +165,6 @@ def get_stop_coordinates(zip_path):
             return common_stop_coordinates
 
 
-def get_stop_coordinates_old(zip_path):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        with zip_ref.open('rec_ort.x10') as rec_ort_file, zip_ref.open('lid_verlauf.x10') as lid_verlauf_file:
-            rec_ort_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in rec_ort_file), delimiter=';')
-            lid_verlauf_reader = csv.reader((line.decode('iso-8859-1').replace('\0', '') for line in lid_verlauf_file), delimiter=';')
-
-            rec_ort_headers = next(row for row in rec_ort_reader if row[0].strip() == 'atr')
-            lid_verlauf_headers = next(row for row in lid_verlauf_reader if row[0].strip() == 'atr')
-
-            rec_ort_headers = [header.strip() for header in rec_ort_headers]
-            lid_verlauf_headers = [header.strip() for header in lid_verlauf_headers]
-
-
-
-
-            rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
-            rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_LAENGE'))
-            lid_verlauf_ort_nr_idx = lid_verlauf_headers.index('ORT_NR')
-
-            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]], row[rec_ort_ort_nr_idx]) for row in rec_ort_reader if row[0].strip() == 'rec'}
-            lid_verlauf_data = {row[lid_verlauf_ort_nr_idx] for row in lid_verlauf_reader if row[0].strip() == 'rec'}
-
-            common_stop_coordinates = [coords for ort_nr, coords in rec_ort_data.items() if ort_nr in lid_verlauf_data]
-            return common_stop_coordinates
-
 
 
 
@@ -225,7 +200,7 @@ def create_deadhead_catalog(zip_path):
 
     progress_bar = st.progress(0)
     total_combinations = len(combinations)
-
+    st.write("Progress")
     for i, row in combinations.iterrows():
         try:
             result = get_routing(row, client)

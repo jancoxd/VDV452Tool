@@ -193,7 +193,7 @@ def create_deadhead_catalog(zip_path):
     results = []
 
     for i, row in combinations.iterrows():
-        if i >= 1000:
+        if i >= 50:
             break
 
         try:

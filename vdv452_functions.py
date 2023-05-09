@@ -182,14 +182,11 @@ def create_deadhead_catalog(zip_path):
     combinations = combinations[(combinations[0] != combinations[1])]
     st.write("combinations:", combinations)
     results = []
-    try:
-        for i, row in combinations.iterrows():
-            origin_destination = (row[0], row[1])
-            result = get_routing(origin_destination[0], origin_destination[1], client)
-            results.append(result)
-    except Exception as e:
-        st.write("Error:", e)
-        st.write(traceback.format_exc())
+    for i, row in combinations.iterrows():
+        origin_destination = (row[0], row[1])
+        result = get_routing(origin_destination[0], origin_destination[1], client)
+        results.append(result)
+
 
     columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
     deadhead_catalog = pd.DataFrame(results, columns=columns)

@@ -149,7 +149,7 @@ def get_stop_coordinates(zip_path):
             rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_LAENGE'))
             lid_verlauf_ort_nr_idx = lid_verlauf_headers.index('ORT_NR')
 
-            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]]) for row in rec_ort_reader if row[0].strip() == 'rec'}
+            rec_ort_data = {row[rec_ort_ort_nr_idx]: (row[rec_ort_coords_idx[0]], row[rec_ort_coords_idx[1]], row[rec_ort_ort_nr_idx[0]]) for row in rec_ort_reader if row[0].strip() == 'rec'}
             lid_verlauf_data = {row[lid_verlauf_ort_nr_idx] for row in lid_verlauf_reader if row[0].strip() == 'rec'}
 
             common_stop_coordinates = [coords for ort_nr, coords in rec_ort_data.items() if ort_nr in lid_verlauf_data]

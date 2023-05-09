@@ -192,6 +192,9 @@ def create_deadhead_catalog(zip_path):
     results = []
 
     for i, row in combinations.iterrows():
+        if i >= 1000:
+            break
+
         try:
             result = get_routing(row, client)
         except Exception as e:

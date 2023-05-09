@@ -167,6 +167,7 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     origin_ort, destination_ort = origin[2], destination[2]
     destination_lat, destination_lon = destination[1], destination[0]
+    st.write(origin)
     route = client.directions(locations=[origin, destination], profile='bus')
     st.write(route)
     return [origin_ort,destination_ort,(route.duration / 60), route.distance / 1000]
@@ -208,15 +209,15 @@ def create_deadhead_catalog(zip_path):
                'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time',
                'updatedAt']
 
-    ex_results = pd.concat([results, pd.DataFrame(columns=columns)])
+    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
 
     # Drop columns [0, 1]
-    ex_results = combinations.drop(columns=[0, 1])
+    combinations = combinations.drop(columns=[0, 1])
 
     # Write DataFrame to BytesIO object
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        results.ex_results(writer, index=False, sheet_name='Deadheads')
+        combinations.to_excel(writer, index=False, sheet_name='Deadheads')
 
     # Retrieve the BytesIO object's content
     excel_data = output.getvalue()

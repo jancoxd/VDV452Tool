@@ -208,15 +208,15 @@ def create_deadhead_catalog(zip_path):
                'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time',
                'updatedAt']
 
-    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+    ex_results = pd.concat([results, pd.DataFrame(columns=columns)])
 
     # Drop columns [0, 1]
-    combinations = combinations.drop(columns=[0, 1])
+    ex_results = combinations.drop(columns=[0, 1])
 
     # Write DataFrame to BytesIO object
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        combinations.to_excel(writer, index=False, sheet_name='Deadheads')
+        results.ex_results(writer, index=False, sheet_name='Deadheads')
 
     # Retrieve the BytesIO object's content
     excel_data = output.getvalue()

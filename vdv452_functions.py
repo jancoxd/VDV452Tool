@@ -155,9 +155,7 @@ def get_stop_coordinates(zip_path):
             return common_stop_coordinates
 
 
-def get_stop_coordinates(zip_path):
-    # Your get_stop_coordinates function implementation here
-    pass
+
 
 
 def get_routing(origin, destination, client):

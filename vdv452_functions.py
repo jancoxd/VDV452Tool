@@ -199,16 +199,16 @@ def create_deadhead_catalog(zip_path):
         try:
             result = get_routing(row, client)
         except Exception as e:
-            st.write("Error:", e)
-            st.write(traceback.format_exc())
             pass
         results.append(result)
 
-    columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
-    deadhead_catalog = pd.DataFrame(results, columns=columns)
-    deadhead_catalog = deadhead_catalog.to_excel('deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',
+               'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time', 'updatedAt']
+    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+    excel = combinations.drop([0, 1], axis=1).to_excel(
+    'deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
 
-    return deadhead_catalog
+    return excel
 
 
 def update_coordinates(content):

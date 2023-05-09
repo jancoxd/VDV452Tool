@@ -83,7 +83,7 @@ if uploaded_file is not None:
 
                 new_zip_path = get_stop_coordinates_from_zip(temp_path)
                 print(new_zip_path)
-                st.success(f'VDV452 zip file updated successfully: {new_zip_path[1]}')
+                st.success(f'VDV452 zip file updated successfully: {str(new_zip_path)}')
 
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:

@@ -206,7 +206,7 @@ def create_deadhead_catalog(zip_path):
 
     columns = ['Origin', 'Destination', 'Travel Time (min)', 'Distance (km)']
     deadhead_catalog = pd.DataFrame(results, columns=columns)
-    deadhead_catalog.to_excel('deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
+    deadhead_catalog = deadhead_catalog.to_excel('deadhead_catalog.xlsx', index=False, sheet_name='Deadheads')
 
     return deadhead_catalog
 

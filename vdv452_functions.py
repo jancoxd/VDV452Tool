@@ -176,6 +176,7 @@ def create_deadhead_catalog(zip_path):
         combinations = combinations[(combinations.crow_distance < max_threshold) & (combinations.crow_distance > min_threshold) & (combinations[0] != combinations[1])]
     else:
         combinations = combinations[(combinations[0] != combinations[1])]
+    tqdm.pandas()
     combinations[['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance']] = combinations.progress_apply(
         lambda x: get_routing(x), axis=1, result_type='expand')
     columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name', 'Destination Stop Name',

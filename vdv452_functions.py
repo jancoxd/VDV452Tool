@@ -167,9 +167,7 @@ def get_routing(row, client):
     origin_lat, origin_lon = origin[1], origin[0]
     origin_ort, destination_ort = origin[2], destination[2]
     destination_lat, destination_lon = destination[1], destination[0]
-    st.write(origin)
     route = client.directions(locations=[(origin[0],origin[1]), (destination[0],destination[1])], profile='bus')
-    st.write(route)
     st.write([origin_ort,destination_ort,(route.duration / 60), route.distance / 1000])
 
 
@@ -204,12 +202,14 @@ def create_deadhead_catalog(zip_path):
             pass
         results.append(result)
 
+    results_df = pd.DataFrame(results, columns=['Origin Stop Id', 'Destination Stop Id', 'Travel Time', 'Distance'])
+
     columns = ['Start Time Range', 'End Time Range', 'Generate Time', 'Route Id', 'Origin Stop Name',
                'Destination Stop Name',
                'Days Of Week', 'Direction', 'Purpose', 'Alignment', 'Pre-Layover Time', 'Post-Layover Time',
                'updatedAt']
 
-    combinations = pd.concat([combinations, pd.DataFrame(columns=columns)])
+    combinations = pd.concat([results_df, pd.DataFrame(columns=columns)])
 
     # Drop columns [0, 1]
     combinations = combinations.drop(columns=[0, 1])

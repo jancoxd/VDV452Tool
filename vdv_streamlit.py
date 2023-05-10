@@ -96,6 +96,7 @@ if uploaded_file is not None:
                 download = 0
                 stops = view_stops_on_map(temp_path)
                 st.map(stops)
+                new_zip_path = temp_path
 
             elif selected_function == 'Create Deadhead Catalog':
 

@@ -240,7 +240,6 @@ def view_stops_on_map(zip_path):
     lat_lon.drop(['ORT_NR'], axis=1)
     lat_lon['lat'] = lat_lon['lat'].apply(lambda x: x[:2] + '.' + x[2:]).astype(float)
     lat_lon['lon'] = lat_lon['lon'].apply(lambda x: x[:2] + '.' + x[2:]).astype(float)
-    st.write(lat_lon)
     return lat_lon
 
 

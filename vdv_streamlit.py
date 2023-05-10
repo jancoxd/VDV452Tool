@@ -17,7 +17,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.getbuffer())
 
     # Let users select a function to perform
-    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check VDV Files', 'Create Deadhead Catalog']
+    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check VDV Files', 'Show Stops on Map', 'Create Deadhead Catalog']
     selected_function = st.selectbox('Select a function to perform:', function_options)
 
     if selected_function == 'Add New Vehicle':
@@ -91,7 +91,7 @@ if uploaded_file is not None:
                 new_zip_path = update_zip(temp_path, 0, 2)
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
-            elif selected_function == 'Create Deadhead Catalog':
+            elif selected_function == 'Show Stops on Map':
                 download = 0
                 stops = view_stops_on_map(temp_path)
                 st.map(stops)

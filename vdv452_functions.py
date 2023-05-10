@@ -179,6 +179,7 @@ def get_routing(row, client):
 def create_deadhead_catalog(zip_path, custom_stop_coordinates=None):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
     stops_coordinates = get_stop_coordinates(zip_path)
+    st.write('Stop Coordinates finished')
     if custom_stop_coordinates:
         stops_coordinates.extend(custom_stop_coordinates)
 

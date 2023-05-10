@@ -48,9 +48,10 @@ if uploaded_file is not None:
                 check5 = update_zip(temp_path, 0, 3)
                 st.write("Empty Files found: ", check1)
                 st.write("Additional Files found: ", check2)
-                st.success(check3)
-                st.success(check4)
-                st.success(check5)
+                st.write(check3)
+                st.write(check4)
+                st.write(check5)
+                st.success("VDV Check finished")
                 new_zip_path = temp_path
                 download = 0
 

@@ -100,8 +100,17 @@ if uploaded_file is not None:
                 new_zip_path = temp_path
 
             elif selected_function == 'Create Deadhead Catalog':
+                ort_nr = st.text_input('Enter ORT_NR:')
+                coordinates = st.text_area('Enter coordinates (comma-separated):')
+                custom_stop_coordinates = []
+                if ort_nr and coordinates:
+                    # Parse coordinates string into a list
+                    coordinates = [float(coord) for coord in coordinates.split(',')]
+                    # Add the custom ORT_NR and coordinates to the coordinates list
+                    custom_stop_coordinates.append((coordinates, ort_nr))
 
-                excel_data = create_deadhead_catalog(temp_path)
+                excel_data = create_deadhead_catalog(temp_path, custom_stop_coordinates)
+
                 st.success(f'Deadhead Catalog finished:')
                 st.download_button(
                     label='Download Deadhead Catalog',

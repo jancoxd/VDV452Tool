@@ -176,9 +176,11 @@ def get_routing(row, client):
     return [origin_ort,destination_ort,(route.duration / 60), route.distance / 1000]
 
 
-def create_deadhead_catalog(zip_path):
+def create_deadhead_catalog(zip_path, custom_stop_coordinates=None):
     api_key = 'pk.eyJ1IjoiemFjaGFyaWVjaGViYW5jZSIsImEiOiJja3FodjU3d2gwMGdoMnhxM2ZmNjZkYXc5In0.CSFfUFU-zyK_K-wwYGyQ0g'
     stops_coordinates = get_stop_coordinates(zip_path)
+    if custom_stop_coordinates:
+        stops_coordinates.extend(custom_stop_coordinates)
 
     lat_lon = pd.DataFrame(stops_coordinates, columns=['ORT_POS_LAENGE', 'ORT_POS_BREITE', 'ORT_NR']).drop_duplicates()
     lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])

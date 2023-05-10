@@ -95,6 +95,7 @@ if uploaded_file is not None:
             elif selected_function == 'Show Stops on Map':
                 download = 0
                 stops = view_stops_on_map(temp_path)
+                st.header('Start/End Stops: ')
                 st.map(stops)
                 new_zip_path = temp_path
 

@@ -234,6 +234,12 @@ def create_deadhead_catalog(zip_path):
     return excel_data
 
 
+def view_stops_on_map(zip_path):
+    stops_coordinates = get_stop_coordinates(zip_path)
+    lat_lon = pd.DataFrame(stops_coordinates, columns=['lat', 'lon', 'ORT_NR']).drop_duplicates()
+    return lat_lon
+
+
 def update_coordinates(content):
     updated_content = []
     header_row = None

@@ -4,7 +4,7 @@ import io
 import pandas as pd
 import openpyxl
 from zipfile import ZipFile, ZIP_DEFLATED
-from vdv452_functions import get_stop_coordinates, create_deadhead_catalog,  extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
+from vdv452_functions import get_stop_coordinates, create_deadhead_catalog, view_stops_on_map,  extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
 st.title('VDV Tools v0.3')
 st.caption('You can use this tools to check and edit VDV452 Files. Please note, that the VDV452 file must be directly compressed. If there is an extra folder in the .zip Archive it will fail and not find the files.')
@@ -91,6 +91,11 @@ if uploaded_file is not None:
                 new_zip_path = update_zip(temp_path, 0, 2)
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
+            elif selected_function == 'Create Deadhead Catalog':
+                download = 0
+                stops = view_stops_on_map(temp_path)
+                st.map(stops)
+
             elif selected_function == 'Create Deadhead Catalog':
 
                 excel_data = create_deadhead_catalog(temp_path)

@@ -108,17 +108,19 @@ if uploaded_file is not None:
                     coordinates = [float(coord) for coord in coordinates.split(',')]
                     # Add the custom ORT_NR and coordinates to the coordinates list
                     custom_stop_coordinates.append((coordinates, ort_nr))
+                process_button = st.button('Create Deadhead Catalog')
+                if process_button:
 
-                excel_data = create_deadhead_catalog(temp_path, custom_stop_coordinates)
+                    excel_data = create_deadhead_catalog(temp_path, custom_stop_coordinates)
 
-                st.success(f'Deadhead Catalog finished:')
-                st.download_button(
-                    label='Download Deadhead Catalog',
-                    data=excel_data,
-                    file_name='deadhead.xlsx',
-                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                )
-                new_zip_path = temp_path
+                    st.success(f'Deadhead Catalog finished:')
+                    st.download_button(
+                        label='Download Deadhead Catalog',
+                        data=excel_data,
+                        file_name='deadhead.xlsx',
+                        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    )
+                    new_zip_path = temp_path
             # Offer the processed file for download
             with open(new_zip_path, 'rb') as f:
                 if download == 1:

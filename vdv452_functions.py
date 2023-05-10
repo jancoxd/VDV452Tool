@@ -141,8 +141,6 @@ def get_stop_coordinates(zip_path):
             rec_ort_headers = [header.strip() for header in rec_ort_headers]
             lid_verlauf_headers = [header.strip() for header in lid_verlauf_headers]
 
-            st.write("rec_ort_headers:", rec_ort_headers)
-            st.write("lid_verlauf_headers:", lid_verlauf_headers)
 
             rec_ort_ort_nr_idx = rec_ort_headers.index('ORT_NR')
             rec_ort_coords_idx = (rec_ort_headers.index('ORT_POS_BREITE'), rec_ort_headers.index('ORT_POS_LAENGE'))
@@ -240,6 +238,7 @@ def view_stops_on_map(zip_path):
     lat_lon.drop(['ORT_NR'], axis=1)
     lat_lon['lat'] = lat_lon['lat'].apply(lambda x: x[:2] + '.' + x[2:])
     lat_lon['lon'] = lat_lon['lon'].apply(lambda x: x[:2] + '.' + x[2:])
+    st.write(lat_lon)
     return lat_lon
 
 

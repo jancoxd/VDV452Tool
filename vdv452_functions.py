@@ -237,6 +237,8 @@ def create_deadhead_catalog(zip_path):
 def view_stops_on_map(zip_path):
     stops_coordinates = get_stop_coordinates(zip_path)
     lat_lon = pd.DataFrame(stops_coordinates, columns=['lat', 'lon', 'ORT_NR']).drop_duplicates()
+    lat_lon['ORT_POS_BREITE'] = lat_lon['ORT_POS_BREITE'].apply(lambda x: x[:2] + '.' + x[2:])
+    lat_lon['ORT_POS_LAENGE'] = lat_lon['ORT_POS_LAENGE'].apply(lambda x: x[:2] + '.' + x[2:])
     return lat_lon
 
 

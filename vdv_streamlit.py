@@ -91,6 +91,7 @@ if uploaded_file is not None:
                 new_zip_path = update_zip(temp_path, 0, 2)
                 print(new_zip_path)
                 st.success(f'VDV452 zip file updated successfully: {new_zip_path}')
+
             elif selected_function == 'Show Stops on Map':
                 download = 0
                 stops = view_stops_on_map(temp_path)

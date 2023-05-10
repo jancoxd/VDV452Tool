@@ -17,7 +17,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.getbuffer())
 
     # Let users select a function to perform
-    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check for empy Coordinates', 'Check VDV Files', 'Check for additional Files', 'Validate Files', 'Check for Columns with 0s', 'Create Deadhead Catalog']
+    function_options = ['Switch Columns', 'Add New Vehicle', 'Update Coordinates', 'Check VDV Files', 'Create Deadhead Catalog']
     selected_function = st.selectbox('Select a function to perform:', function_options)
 
     if selected_function == 'Add New Vehicle':
@@ -46,8 +46,8 @@ if uploaded_file is not None:
                 check3 = update_zip(temp_path, 0, 6)
                 check4 = update_zip(temp_path, 0, 7)
                 check5 = update_zip(temp_path, 0, 3)
-                st.success(check1)
-                st.success(check2)
+                st.success("Empty Files found: ", check1)
+                st.success("Additional Files found: ",check2)
                 st.success(check3)
                 st.success(check4)
                 st.success(check5)

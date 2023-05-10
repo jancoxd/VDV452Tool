@@ -6,8 +6,8 @@ import openpyxl
 from zipfile import ZipFile, ZIP_DEFLATED
 from vdv452_functions import get_stop_coordinates, create_deadhead_catalog,  extract_vdv452_zip,readlines_from_file, update_zip, validate_files, update_coordinates, write_file, add_new_line, check_empty_coordinates, find_files_without_rec, find_additional_files_with_rec, switch_ort_names
 
-st.title('VDV Tools v0.23b')
-
+st.title('VDV Tools v0.3')
+st.caption('You can use this tools to check and edit VDV452 Files. Please note, that the VDV452 file must be directly compressed. If there is an extra folder in the .zip Archive it will fail and not find the files.')
 uploaded_file = st.file_uploader('Upload a VDV zip file:', type=['zip'])
 
 if uploaded_file is not None:
